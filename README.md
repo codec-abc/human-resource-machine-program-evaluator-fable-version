@@ -22,4 +22,4 @@ webpack
 
 ### Run
 
-Once compiled open output/index.html
+Once compiled open public/index.html
