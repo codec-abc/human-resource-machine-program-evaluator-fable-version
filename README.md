@@ -3,11 +3,17 @@
 [![CircleCI](https://circleci.com/gh/codec-abc/human-resource-machine-program-evaluator.svg?style=svg)](https://circleci.com/gh/codec-abc/human-resource-machine-program-evaluator)
 
 ## Dependencies
-.Net core SDK
+NPM
+Fable
 
-## Run
+## Install fable
+```
+npm install -g fable-compiler
+```
+
+## Compile
 
 ```bash
-dotnet restore
-dotnet run
+npm install
+fable -s -o output hmrpEvaluator.fsproj
 ```
