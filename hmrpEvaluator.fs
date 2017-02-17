@@ -139,17 +139,17 @@ module HmrpEvaluator =
             let regexMatch = LabelRegex.Match line
 
             let label =  {
-                Name = regexMatch.Groups.[1].Captures.[0].Value;
+                Name = "";//regexMatch.Groups.[1].Captures.[0].Value;
                 Line = lineNumber;
             }
             LabelLine label
         elif isInstruction then
             let regexMatch = InstructionRegex.Match line
-            let instructionName = regexMatch.Groups.[2].Captures.[0].Value
-            let hasArgument = regexMatch.Groups.Count >= 4
+            let instructionName = "TEST"//regexMatch.Groups.[2].Captures.[0].Value
+            let hasArgument = false// regexMatch.Groups.Count >= 4
             let argument = 
                 if hasArgument then
-                    Some regexMatch.Groups.[4].Captures.[0].Value
+                    Some "a"//regexMatch.Groups.[4].Captures.[0].Value
                 else
                     None
             toInstruction instructionName argument lineNumber

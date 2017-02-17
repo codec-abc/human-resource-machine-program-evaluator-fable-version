@@ -5,9 +5,31 @@ open Hmrp
 
 module Main =
 
+    let lines = 
+        [|"-- HUMAN RESOURCE MACHINE PROGRAM --";
+        "   a:";
+        "    b:";
+        "        INBOX   ";
+        "        COPYTO   0";
+        "        OUTBOX  ";
+        "        COPYFROM 0";
+        "        JUMPN    d";
+        "    c:";
+        "        JUMPZ    a";
+        "        BUMPDN   0";
+        "        OUTBOX  ";
+        "        COPYFROM 0";
+        "        JUMP     c";
+        "    d:";
+        "    e:";
+        "        BUMPUP   0";
+        "        OUTBOX  ";
+        "        COPYFROM 0";
+        "        JUMPZ    b";
+        "        JUMP     e"|]
+
     [<EntryPoint>]
     let main argv = 
-        let lines = File.ReadAllLines "program.hrmp"
         let programLines = HmrpEvaluator.stringArrayToProgramList lines
         //printProgramLines programLines
         let initialMachineState = 

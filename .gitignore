@@ -32,3 +32,6 @@ msbuild.wrn
 .vs/
 
 node_modules/
+
+main.js
+hmrpEvaluator.js
