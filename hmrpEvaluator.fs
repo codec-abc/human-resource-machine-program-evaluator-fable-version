@@ -3,6 +3,7 @@
 open System
 open System.Text.RegularExpressions
 open System.Collections.Generic
+open ResultF
 
 module HmrpEvaluator =
 
@@ -171,17 +172,17 @@ module HmrpEvaluator =
                 | LabelLine label ->
                     label.Name = labelToFind
         try
-            Ok <| List.findIndex filterFunc program
+            ResultF.OkF <| List.findIndex filterFunc program
         with
-            | _ -> Error <| sprintf "Cannot find line with the given label %s." labelToFind
+            | _ -> ResultF.ErrorF <| sprintf "Cannot find line with the given label %s." labelToFind
 
     let private getRegisterByIndex (registers : Register list) (registerIndex : int) =
         let filterFunc = fun (register : Register) -> 
             register.Index = registerIndex
         try
-            Ok <| List.find filterFunc registers
+            ResultF.OkF <| List.find filterFunc registers
         with
-            | _ -> Error <| sprintf "Cannot find register with the given index %i." registerIndex
+            | _ -> ResultF.ErrorF <| sprintf "Cannot find register with the given index %i." registerIndex
 
     let private runInboxInstruction machineState =
         if machineState.Inputs.Length > 0 then
@@ -194,9 +195,9 @@ module HmrpEvaluator =
                         HumanValue = Some firstElemOfInput;
                         Inputs = restOfInput;
                 }
-                in Ok result
+                in ResultF.OkF result
         else
-            Error "Cannot get an input because the input list is empty."
+            ResultF.ErrorF "Cannot get an input because the input list is empty."
 
 
     let private runOutBoxInstruction machineState =
@@ -210,8 +211,8 @@ module HmrpEvaluator =
                             HumanValue = None;
                             Outputs = newOutputs
                     }
-                    in Ok result
-            | None -> Error "Cannot set output since there is no value in the human register."
+                    in ResultF.OkF result
+            | None -> ResultF.ErrorF "Cannot set output since there is no value in the human register."
 
     let private runJumpIfNegativeInstruction machineState labelToJumpTo =
         match machineState.HumanValue with
@@ -221,15 +222,15 @@ module HmrpEvaluator =
                     if shouldJump then
                         getLineIndexByLabelName machineState.ProgramLines labelToJumpTo
                     else
-                        Ok <| machineState.CurrentInstructionLine + 1
+                        ResultF.OkF <| machineState.CurrentInstructionLine + 1
                 let f = 
                     fun nextLineIndex -> 
-                        Ok {
+                        ResultF.OkF {
                             machineState with
                                 CurrentInstructionLine = nextLineIndex;
                         }
-                Result.bind f nextLineIndexOrError
-            | None -> Error "Cannot test to jump since there is no value in the human register."
+                ResultF.bind f nextLineIndexOrError
+            | None -> ResultF.ErrorF "Cannot test to jump since there is no value in the human register."
 
     let private runJumpIfZeroInstruction machineState labelToJumpTo =
         match machineState.HumanValue with
@@ -239,25 +240,25 @@ module HmrpEvaluator =
                 if shouldJump then
                     getLineIndexByLabelName machineState.ProgramLines labelToJumpTo
                 else
-                    Ok <| machineState.CurrentInstructionLine + 1
+                    ResultF.OkF <| machineState.CurrentInstructionLine + 1
             let f =
                 fun nextLineIndex -> 
-                    Ok { 
+                    ResultF.OkF { 
                         machineState with
                             CurrentInstructionLine = nextLineIndex;
                     } 
-            Result.bind f nextLineIndexOrError
-        | None -> Error "Cannot test to jump since there is no value in the human register."
+            ResultF.bind f nextLineIndexOrError
+        | None -> ResultF.ErrorF "Cannot test to jump since there is no value in the human register."
 
     let private runJumpInstruction machineState labelToJumpTo =
         let nextLineIndexOrError = getLineIndexByLabelName machineState.ProgramLines labelToJumpTo
         let f =
             fun nextLineIndex ->
-                Ok {
+                ResultF.OkF {
                     machineState with
                         CurrentInstructionLine = nextLineIndex;
                 }
-        Result.bind f nextLineIndexOrError
+        ResultF.bind f nextLineIndexOrError
 
     let private runCopyToInstruction machineState registerIndex =
         let oldRegisterOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -273,13 +274,13 @@ module HmrpEvaluator =
                     
                     let allRegisterExceptOne = List.filter (fun register -> register <> oldRegister) machineState.Registers
                     let allRegistersUpdate = List.append allRegisterExceptOne [newRegister]
-                    Ok {
+                    ResultF.OkF {
                         machineState with 
                             CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
                             Registers = allRegistersUpdate
                     }
-                | None -> Error <| sprintf "Cannot copy to register %i because there is no value in the human register." oldRegister.Index
-        Result.bind f oldRegisterOrError
+                | None -> ResultF.ErrorF <| sprintf "Cannot copy to register %i because there is no value in the human register." oldRegister.Index
+        ResultF.bind f oldRegisterOrError
 
     let private runCopyFromInstruction machineState registerIndex =
         let registerOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -287,13 +288,13 @@ module HmrpEvaluator =
             fun register ->
                 match register.RegisterValue with
                     | Some registerValue  ->
-                        Ok {
+                        ResultF.OkF {
                             machineState with 
                                 CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
                                 HumanValue = Some registerValue
                         }
-                    | None -> Error <| sprintf "Cannot copy from register %i because register has no value." register.Index
-        Result.bind f registerOrError
+                    | None -> ResultF.ErrorF <| sprintf "Cannot copy from register %i because register has no value." register.Index
+        ResultF.bind f registerOrError
 
     let private runAddInstruction machineState registerIndex =
         let registerOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -303,14 +304,14 @@ module HmrpEvaluator =
                     | Some registerValue  ->
                         match machineState.HumanValue with
                             | Some humanValue ->
-                                Ok {
+                                ResultF.OkF {
                                     machineState with 
                                         CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
                                         HumanValue = Some <| registerValue + humanValue
                                 }
-                            | None -> Error "Cannot add with register %i because there is no value in the human register"
-                    | None -> Error <| sprintf "Cannot add with register %i because register has no value." register.Index
-        Result.bind f registerOrError
+                            | None -> ResultF.ErrorF "Cannot add with register %i because there is no value in the human register"
+                    | None -> ResultF.ErrorF <| sprintf "Cannot add with register %i because register has no value." register.Index
+        ResultF.bind f registerOrError
 
     let private runSubtractInstruction machineState registerIndex =
         let registerOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -320,14 +321,14 @@ module HmrpEvaluator =
                     | Some registerValue  ->
                         match machineState.HumanValue with
                             | Some humanValue ->
-                                Ok {
+                               ResultF. OkF {
                                     machineState with 
                                         CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
                                         HumanValue = Some <| humanValue - registerValue
                                 }
-                            | None -> Error "Cannot add with register %i because there is no value in the human register"
-                    | None -> Error <| sprintf "Cannot subtract from register %i because register has no value." register.Index
-        Result.bind f registerOrError
+                            | None -> ResultF.ErrorF "Cannot add with register %i because there is no value in the human register"
+                    | None -> ResultF.ErrorF <| sprintf "Cannot subtract from register %i because register has no value." register.Index
+        ResultF.bind f registerOrError
 
     let private runIncrementInstruction machineState registerIndex =
         let oldRegisterOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -343,13 +344,13 @@ module HmrpEvaluator =
                             }
                         let allRegisterExceptOne = List.filter (fun register -> register <> oldRegister) machineState.Registers
                         let allRegistersUpdate = List.append allRegisterExceptOne [newRegister]
-                        Ok {
+                        ResultF.OkF {
                             machineState with 
                                 CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
                                 Registers = allRegistersUpdate
                         }               
-                    | None -> Error <| sprintf "Cannot increment from register %i because register has no value." oldRegister.Index
-        Result.bind f oldRegisterOrError
+                    | None -> ResultF.ErrorF <| sprintf "Cannot increment from register %i because register has no value." oldRegister.Index
+        ResultF.bind f oldRegisterOrError
 
     let private runDecrementInstruction machineState registerIndex =
         let oldRegisterOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -365,13 +366,13 @@ module HmrpEvaluator =
                             }
                         let allRegisterExceptOne = List.filter (fun register -> register <> oldRegister) machineState.Registers
                         let allRegistersUpdate = List.append allRegisterExceptOne [newRegister]
-                        Ok  {
+                        ResultF.OkF  {
                             machineState with 
                                 CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
                                 Registers = allRegistersUpdate
                         }
-                    | None -> Error <| sprintf "Cannot increment from register %i because register has no value." oldRegister.Index
-        Result.bind f oldRegisterOrError
+                    | None -> ResultF.ErrorF <| sprintf "Cannot increment from register %i because register has no value." oldRegister.Index
+        ResultF.bind f oldRegisterOrError
 
     let runInstruction (machineState : MachineState) (instruction : Instruction) =
         //printfn "Running line %i with instruction %s " (machineState.CurrentInstructionLine + 1) (instruction.ToString())
@@ -389,8 +390,8 @@ module HmrpEvaluator =
                 | Increment registerIndex -> runIncrementInstruction machineState registerIndex
                 | Decrement registerIndex -> runDecrementInstruction machineState registerIndex
         match nextStep with
-            | Error str -> End str
-            | Ok newState -> NewState newState
+            | ResultF.ErrorF str -> End str
+            | ResultF.OkF newState -> NewState newState
 
     let runStep (machineState : MachineState) =
         let currentLineNumber = machineState.CurrentInstructionLine;
