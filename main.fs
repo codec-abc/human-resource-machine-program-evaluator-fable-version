@@ -2,6 +2,8 @@ namespace Main
 
 open System.IO
 open Hmrp
+open Fable.Core 
+open Fable.Import
 
 module Main =
 
@@ -30,6 +32,7 @@ module Main =
 
     [<EntryPoint>]
     let main argv = 
+        printfn "Start"
         let programLines = HmrpEvaluator.stringArrayToProgramList lines
         //printProgramLines programLines
         let initialMachineState = 

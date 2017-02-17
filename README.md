@@ -1,6 +1,4 @@
-# HMRP Evaluator
-
-[![CircleCI](https://circleci.com/gh/codec-abc/human-resource-machine-program-evaluator.svg?style=svg)](https://circleci.com/gh/codec-abc/human-resource-machine-program-evaluator)
+# HMRP Evaluator Fable
 
 ## Dependencies
 NPM
@@ -8,12 +6,18 @@ Fable
 
 ## Install fable
 ```
-npm install -g fable-compiler
+npm install
 ```
 
-## Compile
+## Compile And Run
+
+### Compile
 
 ```bash
-npm install
 fable -s -o output hmrpEvaluator.fsproj
+node ./node_modules/webpack/bin/webpack.js output/main.js output/bundle.js
 ```
+
+### Run
+
+Once compile open output/index.html

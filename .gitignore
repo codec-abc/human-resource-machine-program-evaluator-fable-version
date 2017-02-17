@@ -34,3 +34,5 @@ msbuild.wrn
 node_modules/
 output/*.js
 output/*.js.map
+output/bundle.js
+output/bundle.js.map

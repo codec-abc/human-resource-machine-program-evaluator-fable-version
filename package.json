@@ -1,14 +1,20 @@
 {
-  "name": "fsharp-hmrp-fable",
+  "name": "fshaarp-hmrp-fable",
   "version": "1.0.0",
-  "description": "[![CircleCI](https://circleci.com/gh/codec-abc/human-resource-machine-program-evaluator.svg?style=svg)](https://circleci.com/gh/codec-abc/human-resource-machine-program-evaluator)",
-  "main": "result.js",
+  "description": "NPM\r Fable",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "fable-providers-regex": "0.0.2"
+    "fable-compiler": "^0.7.42",
+    "source-map-loader": "^0.1.6",
+    "webpack": "^2.2.1"
+  },
+  "dependencies": {
+    "core-js": "^2.4.1",
+    "fable-core": "^0.7.26"
   }
 }

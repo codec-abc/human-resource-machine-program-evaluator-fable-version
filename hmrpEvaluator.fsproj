@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="node_modules/fable-providers-regex/Fable.Providers.Regex.dll" />
+    <Reference Include="node_modules/fable-core/Fable.Core.dll" />
   </ItemGroup>
 
   <ItemGroup>
