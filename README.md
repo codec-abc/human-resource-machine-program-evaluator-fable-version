@@ -1,11 +1,13 @@
 # HMRP Evaluator Fable
 
 ## Dependencies
-NPM
-Fable
+* Nodejs and NPM
+* Fable own dependencies (F# 4.0 and node 4.4) see Fable site for more information
 
-## Install fable
-```
+## Install dependencies
+```bash
+npm install -g fable-compiler
+npm install -g webpack
 npm install
 ```
 
@@ -14,10 +16,11 @@ npm install
 ### Compile
 
 ```bash
-fable -s -o output hmrpEvaluator.fsproj
-node ./node_modules/webpack/bin/webpack.js output/main.js output/bundle.js
+npm install # Do only once
+fable
+webpack
 ```
 
 ### Run
 
-Once compile open output/index.html
+Once compiled open output/index.html
