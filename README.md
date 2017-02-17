@@ -16,7 +16,6 @@ npm install
 ### Compile
 
 ```bash
-npm install # Do only once
 fable
 webpack
 ```
