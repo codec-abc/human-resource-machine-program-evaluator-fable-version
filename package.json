@@ -1,0 +1,14 @@
+{
+  "name": "fsharp-hmrp-fable",
+  "version": "1.0.0",
+  "description": "[![CircleCI](https://circleci.com/gh/codec-abc/human-resource-machine-program-evaluator.svg?style=svg)](https://circleci.com/gh/codec-abc/human-resource-machine-program-evaluator)",
+  "main": "result.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "fable-providers-regex": "0.0.2"
+  }
+}
