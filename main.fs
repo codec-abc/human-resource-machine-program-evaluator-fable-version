@@ -4,6 +4,7 @@ open System.IO
 open Hmrp
 open Fable.Core 
 open Fable.Import
+open Fable.Core.JsInterop
 
 module Main =
 
@@ -30,8 +31,7 @@ module Main =
         "        JUMPZ    b";
         "        JUMP     e"|]
 
-    [<EntryPoint>]
-    let main argv = 
+    let runTestProgram = 
         printfn "Start"
         let programLines = HmrpEvaluator.stringArrayToProgramList lines
         //printProgramLines programLines
@@ -53,4 +53,24 @@ module Main =
 
         printfn "Program has stopped to run because:\n%s" stopReason
         //printStates states
+        let returnCode = 0 in returnCode
+
+
+
+    [<EntryPoint>]
+    let main argv =
+        printfn "Start"
+
+        let addInputButton = Browser.window.document.getElementById("AddInput")
+        let onAddInputButtonClicked = (fun e -> Browser.window.alert "onAddButtonClicked")
+        addInputButton.addEventListener("click", unbox(onAddInputButtonClicked)) |> ignore
+
+        let addRegisterButton = Browser.window.document.getElementById("AddRegister")
+        let onAddRegisterButtonClicked = (fun e -> Browser.window.alert "onAddRegisterClicked")
+        addRegisterButton.addEventListener("click", unbox(onAddRegisterButtonClicked)) |> ignore
+
+        let runButton = Browser.window.document.getElementById("RunButton")
+        let onRunButtonClicked = (fun e -> Browser.window.alert "onRunButtonClicked")
+        runButton.addEventListener("click", unbox(onRunButtonClicked)) |> ignore
+
         let returnCode = 0 in returnCode
