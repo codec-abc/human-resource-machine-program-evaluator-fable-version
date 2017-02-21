@@ -16,17 +16,35 @@ module Main =
   // Documentation : https://github.com/fable-compiler/
   // Documentation : http://fable.io/fable-arch/#/sample/hello-world
 
-  type Model = string
+  type Register = {
+    Index : int;
+    Value : int option
+  }
+
+  type Model = {
+    Registers : Register list;
+    Input : int list;
+    Output : int list;
+    CauseOfStop : string;
+  }
 
   type Actions =
-    | ChangeInput of string
+    | CreateRegister
+    | CreateInput
+    | Run
 
-  // Update
   let update model action =
-    printfn "%s" (action.ToString())
     match action with
       //| ChangeInput str -> str
-      | _ -> model
+      | CreateRegister -> 
+          printfn "Should create a new register"
+          model
+      | Run -> 
+          printfn "Should run"
+          model
+      | CreateInput -> 
+          printfn "Should create input"
+          model
 
   // View
   let view model =
@@ -43,7 +61,7 @@ module Main =
                 button
                   [ 
                     classy "ui button"
-                    onMouseClick (fun e -> unbox(Browser.window.alert("TODO")))
+                    onMouseClick (fun e -> CreateRegister)
                   ]
                   [
                     i
@@ -68,7 +86,7 @@ module Main =
                 button
                   [ 
                     classy "ui button"
-                    onMouseClick (fun e -> unbox(Browser.window.alert("TODO")))
+                    onMouseClick (fun e -> CreateInput)
                   ]
                   [
                     i
@@ -102,7 +120,10 @@ module Main =
                 text "Run & Output"
                 br []
                 button
-                  [classy "ui button"]
+                  [
+                    classy "ui button"
+                    onMouseClick (fun e -> Run)
+                  ]
                   [
                     i
                       [
