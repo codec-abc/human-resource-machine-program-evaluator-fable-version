@@ -7,9 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="result.fs" />  
-    <Compile Include="hmrpEvaluator.fs" />
-    <Compile Include="main.fs" />
+    <Compile Include="src/result.fs" />  
+    <Compile Include="src/hmrpEvaluator.fs" />
+    <Compile Include="src/test.fs" />
+    <Compile Include="src/main.fs" />
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
 

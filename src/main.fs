@@ -13,52 +13,8 @@ open Fable.Arch.Html
 
 module Main =
 
-  let lines = 
-    [|"-- HUMAN RESOURCE MACHINE PROGRAM --";
-    "   a:";
-    "  b:";
-    "    INBOX   ";
-    "    COPYTO   0";
-    "    OUTBOX  ";
-    "    COPYFROM 0";
-    "    JUMPN  d";
-    "  c:";
-    "    JUMPZ  a";
-    "    BUMPDN   0";
-    "    OUTBOX  ";
-    "    COPYFROM 0";
-    "    JUMP   c";
-    "  d:";
-    "  e:";
-    "    BUMPUP   0";
-    "    OUTBOX  ";
-    "    COPYFROM 0";
-    "    JUMPZ  b";
-    "    JUMP   e"|]
-
-  let runTestProgram () = 
-    printfn "Start"
-    let programLines = HmrpEvaluator.stringArrayToProgramList lines
-    //printProgramLines programLines
-    let initialMachineState = 
-      {
-        HmrpEvaluator.defaultMachineState with
-          ProgramLines = programLines
-          Inputs = [1;3;4;-2]
-          Registers = HmrpEvaluator.buildEmptyRegisters 6
-      }
-    
-    let (states, stopReason) = HmrpEvaluator.run initialMachineState
-    try 
-      let lastState = List.last states
-      printfn "last state is:"
-      HmrpEvaluator.printState lastState
-    with 
-      | _ -> ()
-
-    printfn "Program has stopped to run because:\n%s" stopReason
-    //printStates states
-    let returnCode = 0 in returnCode
+  // Documentation : https://github.com/fable-compiler/
+  // Documentation : http://fable.io/fable-arch/#/sample/hello-world
 
   type Model = string
 
@@ -66,14 +22,13 @@ module Main =
     | ChangeInput of string
 
   // Update
-  let update model msg =
-    printfn "%s" (msg.ToString())
-    match msg with
+  let update model action =
+    printfn "%s" (action.ToString())
+    match action with
       //| ChangeInput str -> str
       | _ -> model
 
   // View
-  //let inline onInput x = onEvent "oninput" (fun e -> x (unbox e?target?value)) 
   let view model =
     div
       [ classy "ui two column stackable grid" ]
