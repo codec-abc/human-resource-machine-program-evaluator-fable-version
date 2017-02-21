@@ -23,9 +23,7 @@
 
   <ItemGroup>
     <Reference Include="node_modules/fable-core/Fable.Core.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Reference Include="node_modules/fable-arch/Fable.Arch.dll" />
     <Reference Include="node_modules/fable-import/Fable.Import.dll" />
   </ItemGroup>
 
