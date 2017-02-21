@@ -18,35 +18,98 @@ module Main =
 
   type Register = {
     Index : int;
-    Value : int option
+    Value : int option;
+    UIIndex : int;
   }
 
   type Model = {
     Registers : Register list;
-    Input : int list;
-    Output : int list;
-    CauseOfStop : string;
+    Inputs : int list;
+    Outputs : int list;
+    CauseOfStop : string option;
   }
+
+  let createDefaultModel () =
+    {
+      Registers = [];
+      Inputs = [];
+      Outputs = [];
+      CauseOfStop = None;
+    }
 
   type Actions =
     | CreateRegister
     | CreateInput
     | Run
+    | UpdateRegisterState of int * obj // index * enable/disabled state
+    | NotImplemented
 
   let update model action =
     match action with
-      //| ChangeInput str -> str
       | CreateRegister -> 
+          let newUIIndex = 
+            if model.Registers.Length > 0 then
+              model.Registers |> List.map (fun a -> a.UIIndex) |> List.max
+            else
+              0
           printfn "Should create a new register"
-          model
+          let newRegister = {
+            Index = 0;
+            Value = None;
+            UIIndex = newUIIndex;
+          }
+          { 
+            model with
+              Registers = List.append model.Registers [newRegister]
+          }
       | Run -> 
           printfn "Should run"
           model
       | CreateInput -> 
           printfn "Should create input"
           model
+      | UpdateRegisterState (index, obj) ->
+          let isChecked : bool = (obj?srcElement?checked).ToString() = "true"
+          Browser.window.alert "TODO"
+          model
+      | NotImplemented ->
+          Browser.window.alert "TODO"
+          model
 
-  // View
+  let viewSingleRegister register =
+    let inputAttributes = 
+      if Option.isSome register.Value then
+        [ 
+          attribute "type" "number"
+          Style [
+            ("width", "50px")
+          ]
+        ]
+      else
+        [ 
+          attribute "type" "number" 
+          attribute "disabled" "true"
+          Style [
+            ("width", "50px")
+          ]
+        ]
+
+    div
+      []
+      [
+        text ""
+        input
+          [
+            attribute "type" "checkbox"
+            onChange (fun a -> UpdateRegisterState (register.UIIndex, a))
+          ]
+        text "Value: "
+        input inputAttributes     
+      ]
+
+  let viewRegisters model = 
+    List.map (fun e -> viewSingleRegister e)  model.Registers
+
   let view model =
     div
       [ classy "ui two column stackable grid" ]
@@ -71,6 +134,9 @@ module Main =
                       ]
                       []
                   ]
+                div
+                  []
+                  (viewRegisters model)
               ]
               
           ]
@@ -138,8 +204,8 @@ module Main =
 
   [<EntryPoint>]
   let main argv =
-
-    createSimpleApp "" view update Virtualdom.createRender
+    let initModel = createDefaultModel()
+    createSimpleApp initModel view update Virtualdom.createRender
       |> withStartNodeSelector "#app"
       |> start
     
