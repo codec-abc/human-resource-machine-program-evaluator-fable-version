@@ -12,6 +12,7 @@
     <Compile Include="src/evaluator/test.fs" />
     <Compile Include="src/ui/viewModel.fs" />
     <Compile Include="src/ui/registerUI.fs" />
+    <Compile Include="src/ui/inputUI.fs" />
     <Compile Include="src/ui/viewMain.fs" />
     <Compile Include="src/main.fs" />
     <EmbeddedResource Include="**\*.resx" />

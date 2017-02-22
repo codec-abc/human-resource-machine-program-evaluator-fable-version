@@ -13,6 +13,8 @@ open Fable.Arch.Html
 
 open View.ViewModel
 open View.RegisterUI
+open View.InputUI
+
 
 module ViewMain =
   // Documentation : https://github.com/fable-compiler/
@@ -23,9 +25,7 @@ module ViewMain =
       | Run -> 
           printfn "Should run"
           model
-      | CreateInput -> 
-          printfn "Should create input"
-          model
+      | InputAction inputAction -> processInputAction model inputAction
       | RegisterAction registerAction -> processRegisterAction model registerAction
       | NotImplemented ->
           Browser.window.alert "TODO"
@@ -73,7 +73,7 @@ module ViewMain =
                 button
                   [ 
                     classy "ui button"
-                    onMouseClick (fun e -> CreateInput)
+                    onMouseClick (fun e -> InputAction CreateInput)
                   ]
                   [
                     i
@@ -83,6 +83,9 @@ module ViewMain =
                       ]
                       []
                   ]
+                div
+                  []
+                  (viewInputs model) 
               ]
           ]
         div

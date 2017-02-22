@@ -1,7 +1,6 @@
 namespace View
 
 open System.IO
-open Hmrp
 
 open Fable.Core 
 open Fable.Import
@@ -15,7 +14,7 @@ open ViewModel
 
 module RegisterUI =
 
-  let private getInputValuesAttributes register =
+  let private getInputValuesAttributes (register : Register) =
     let onRegisterValueChange = onChange (fun a -> RegisterAction <| UpdateRegisterValue (register.UIIndex, a))
     let basicAttributes =
       [ 
@@ -32,7 +31,7 @@ module RegisterUI =
     List.append basicAttributes moreAttributes
 
 
-  let private getInputStateAttributes register =
+  let private getInputStateAttributes (register : Register) =
     let callback = onChange (fun a -> RegisterAction <| UpdateRegisterState (register.UIIndex, a))
     let checkboxAttribute =  attribute "type" "checkbox"
 
@@ -74,26 +73,24 @@ module RegisterUI =
   
   let private extractRegisterFromList model index =
     let myElem = model.Registers.[index]
-    let otherRegisters = List.filter (fun a -> a.UIIndex <> index) model.Registers
+    let otherRegisters = List.filter (fun (a : Register) -> a.UIIndex <> index) model.Registers
     (myElem, otherRegisters)
 
   let private sortRegisters (registers : Register list) = 
-    List.sortWith (fun a b -> a.UIIndex - b.UIIndex) registers
+    List.sortWith (fun (a : Register) (b : Register) -> a.UIIndex - b.UIIndex) registers
 
   let viewRegisters model = 
-    List.map (fun e -> viewSingleRegister e)  model.Registers
+    List.map viewSingleRegister model.Registers
 
   let processRegisterAction (model : View.ViewModel.Model) action = 
     match action with
       | CreateRegister -> 
           let newUIIndex = 
             if model.Registers.Length > 0 then
-              let max = 
-                model.Registers 
-                |> List.map (fun a -> a.UIIndex) 
-                |> List.max
-
-              max + 1
+              model.Registers 
+              |> List.map (fun a -> a.UIIndex) 
+              |> List.max
+              |> (fun x -> x + 1)
             else
               0
           let newRegister = {
