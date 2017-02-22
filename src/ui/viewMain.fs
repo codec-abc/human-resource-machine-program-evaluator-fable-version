@@ -20,35 +20,13 @@ module ViewMain =
 
   let update (model : View.ViewModel.Model) (action : View.ViewModel.Action) =
     match action with
-      | CreateRegister -> 
-          let newUIIndex = 
-            if model.Registers.Length > 0 then
-              let max = 
-                model.Registers 
-                |> List.map (fun a -> a.UIIndex) 
-                |> List.max
-
-              max + 1
-            else
-              0
-          let newRegister = {
-            Index = 0;
-            Value = 0;
-            Enabled = false;
-            UIIndex = newUIIndex;
-          }
-          { 
-            model with
-              Registers = List.append model.Registers [newRegister]
-          }
       | Run -> 
           printfn "Should run"
           model
       | CreateInput -> 
           printfn "Should create input"
           model
-      | RegisterAction registerAction ->
-        processRegisterAction model registerAction
+      | RegisterAction registerAction -> processRegisterAction model registerAction
       | NotImplemented ->
           Browser.window.alert "TODO"
           model
@@ -67,7 +45,7 @@ module ViewMain =
                 button
                   [ 
                     classy "ui button"
-                    onMouseClick (fun e -> CreateRegister)
+                    onMouseClick (fun e -> RegisterAction CreateRegister)
                   ]
                   [
                     i

@@ -15,6 +15,7 @@ module ViewModel =
     | UpdateRegisterState of int * obj // index * enable/disabled
     | UpdateRegisterValue of int * obj // index * value
     | RemoveRegisterValue of int //index
+    | CreateRegister
 
   type Model = {
     Registers : Register list;
@@ -24,7 +25,6 @@ module ViewModel =
   }
 
   type Action =
-    | CreateRegister
     | CreateInput
     | Run
     | RegisterAction of RegisterAction

@@ -15,42 +15,42 @@ open ViewModel
 
 module RegisterUI =
 
-  let private viewSingleRegister register =
-    let inputValueAttributes = 
-      let onRegisterValueChange = onChange (fun a -> RegisterAction <| UpdateRegisterValue (register.UIIndex, a))
+  let private getInputValuesAttributes register =
+    let onRegisterValueChange = onChange (fun a -> RegisterAction <| UpdateRegisterValue (register.UIIndex, a))
+    let basicAttributes =
+      [ 
+        onRegisterValueChange
+        attribute "type" "number"
+        attribute "value" (register.Value.ToString())
+        Style [("width", "50px")]
+      ]
+    let moreAttributes = 
       if register.Enabled then
-        [ 
-          onRegisterValueChange
-          attribute "type" "number"
-          attribute "value" (register.Value.ToString())
-          Style [
-            ("width", "50px")
-          ]
-        ]
+        []
       else
-        [ 
-          onRegisterValueChange
-          attribute "type" "number" 
-          attribute "disabled" "true"
-          attribute "value" (register.Value.ToString())
-          Style [
-            ("width", "50px")
-          ]
-        ]
-    
-    let inputStateAttributes =
-      if register.Enabled then
-        [
-          attribute "type" "checkbox"
-          property "checked" "true"
-          onChange (fun a -> RegisterAction <| UpdateRegisterState (register.UIIndex, a))
-        ]
-      else
-        [
-          attribute "type" "checkbox"
-          onChange (fun a -> RegisterAction <| UpdateRegisterState (register.UIIndex, a))
-        ]
+        [attribute "disabled" "true"]
+    List.append basicAttributes moreAttributes
 
+
+  let private getInputStateAttributes register =
+    let callback = onChange (fun a -> RegisterAction <| UpdateRegisterState (register.UIIndex, a))
+    let checkboxAttribute =  attribute "type" "checkbox"
+
+    if register.Enabled then
+      [
+        checkboxAttribute
+        callback
+        property "checked" "true"
+      ]
+    else
+      [
+        checkboxAttribute
+        callback
+      ]
+  
+  let private viewSingleRegister register =
+    let inputValueAttributes = getInputValuesAttributes register
+    let inputStateAttributes = getInputStateAttributes register
     div
       []
       [
@@ -85,6 +85,28 @@ module RegisterUI =
 
   let processRegisterAction (model : View.ViewModel.Model) action = 
     match action with
+      | CreateRegister -> 
+          let newUIIndex = 
+            if model.Registers.Length > 0 then
+              let max = 
+                model.Registers 
+                |> List.map (fun a -> a.UIIndex) 
+                |> List.max
+
+              max + 1
+            else
+              0
+          let newRegister = {
+            Index = 0;
+            Value = 0;
+            Enabled = false;
+            UIIndex = newUIIndex;
+          }
+          { 
+            model with
+              Registers = List.append model.Registers [newRegister]
+          }
+
       | UpdateRegisterState (index, obj) ->
           let isChecked : bool = (obj?srcElement?checked).ToString() = "true"
 
