@@ -7,11 +7,10 @@
         <script scr="semantic/semantic.js" type="text/javascript"> </script>
 
         <script src="codemirror/lib/codemirror.js"></script>
+        <script src="codemirror/mode/hmrp.js"></script>
+
         <link rel="stylesheet" href="codemirror/lib/codemirror.css">
         <link rel="stylesheet" href="codemirror/theme/monokai.css">
-        <!--
-        <script src="mode/javascript/javascript.js"></script>
-        -->
         <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
     </head>
     <body>
@@ -29,7 +28,8 @@
                 var codeConfig = 
                 {
                     theme : "monokai", 
-                    value : "-- Type your code here"
+                    value : "-- Type your code here",
+                    mode  : "hmrp"
                 };
 
                 window.myCodeMirror = CodeMirror(elem, codeConfig);
