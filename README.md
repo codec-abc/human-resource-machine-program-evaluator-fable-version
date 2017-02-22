@@ -1,5 +1,8 @@
 # HMRP Evaluator Fable
 
+This repository contains all the code necessary to build a simple application based on web technologies to evaluate Human Resource Machine programs.
+[Human Resource Machine](http://tomorrowcorporation.com/humanresourcemachine) is a fun game about assembly programming with a human taking the role of the CPU.
+
 ## Dependencies
 * Nodejs and NPM
 * Fable own dependencies (F# 4.0 and node 4.4) see Fable site for more information
@@ -31,7 +34,7 @@ run only first time
 npm install -g live-server
 ```
 
-then
+then in a different terminal for each command 
 
 ```
 fable -w
@@ -41,6 +44,5 @@ live-server
 
 ### Useful links
 
-[Fable](https://github.com/fable-compiler/)
-
-[Fable-Arch](http://fable.io/fable-arch/#/sample/hello-world)
+* [Fable](https://github.com/fable-compiler/)
+* [Fable-Arch](http://fable.io/fable-arch/#/sample/hello-world)
