@@ -76,13 +76,19 @@ module RunUI =
       model.Outputs 
       |> List.map (fun a -> a.ToString())
       |> List.fold (fun acc elem -> acc + " " + elem) ""
-
+    
     let myDiv =
       match model.CauseOfStop with
       | Some endCauseValue ->
         [
-          text ("Program stopped because " + endCauseValue)
-          text (outputs)
+          h3
+            []
+            [text "Termination cause: "]
+          text endCauseValue
+          h3
+            []
+            [text "Outputs: "]
+          text outputs
         ]
       | None -> []
     
