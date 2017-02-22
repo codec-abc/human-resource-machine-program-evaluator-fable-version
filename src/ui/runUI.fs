@@ -43,7 +43,7 @@ module RunUI =
   let buildInputs model =
     let mutable result = []
     for inputUIModel in model.Inputs do
-      result <- List.append result [inputUIModel.UIIndex]
+      result <- List.append result [inputUIModel.Value]
     result
     
   let processRunAction model =
