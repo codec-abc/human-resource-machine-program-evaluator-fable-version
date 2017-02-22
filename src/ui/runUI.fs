@@ -84,7 +84,7 @@ module RunUI =
         [
           h3
             []
-            [text "Termination cause: "]
+            [text "Stop cause: "]
           text endCauseValue
           h3
             []

@@ -34,7 +34,9 @@ module ViewMain =
             div
               [ classy "ui segment" ]
               [
-                text "Registers:"
+                h2 
+                  []
+                  [text "Registers:"]
                 button
                   [ 
                     classy "ui button"
@@ -62,7 +64,9 @@ module ViewMain =
                 classy "ui segment"
               ]
               [
-                text "Inputs:"
+                h2
+                  []
+                  [text "Inputs:"]
                 button
                   [ 
                     classy "ui button"
@@ -87,8 +91,9 @@ module ViewMain =
             div
               [classy "ui segment"]
               [
-                text "Code"
-                br []
+                h2
+                  []
+                  [text "Code"]
                 div
                   [ attribute "id" "ide"]
                   []
@@ -100,8 +105,9 @@ module ViewMain =
             div
               [classy "ui segment"]
               [
-                text "Run & Output"
-                br []
+                h2
+                  []
+                  [text "Run & Output"]
                 button
                   [
                     classy "ui button"
