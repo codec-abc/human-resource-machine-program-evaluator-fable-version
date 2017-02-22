@@ -1,0 +1,13 @@
+-- Type your code here
+    INBOX
+    COPYTO 	0
+c:
+    JUMPZ b
+    JUMPN a
+    OUTBOX
+    BUMPDN 	0
+    JUMP 	c
+b:
+    OUTBOX
+a:
+ 
