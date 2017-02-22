@@ -16,10 +16,7 @@ open View.RegisterUI
 open View.InputUI
 open View.RunUI
 
-
 module ViewMain =
-  // Documentation : https://github.com/fable-compiler/
-  // Documentation : http://fable.io/fable-arch/#/sample/hello-world
 
   let update (model : View.ViewModel.Model) (action : View.ViewModel.Action) =
     match action with
