@@ -75,46 +75,58 @@ module RegisterUI =
   let viewRegisters model = 
     List.map (fun e -> viewSingleRegister e)  model.Registers
   
-  let processRegisterAction model action = 
+  let private extractRegisterFromList model index =
+    let myElem = model.Registers.[index]
+    let otherRegisters = List.filter (fun a -> a.UIIndex <> index) model.Registers
+    (myElem, otherRegisters)
+
+  let private sortRegisters (registers : Register list) = 
+    List.sortWith (fun a b -> a.UIIndex - b.UIIndex) registers
+
+  let processRegisterAction (model : View.ViewModel.Model) action = 
     match action with
       | UpdateRegisterState (index, obj) ->
           let isChecked : bool = (obj?srcElement?checked).ToString() = "true"
-          let myElem = model.Registers.[index]
+
+          let (myElem, otherRegisters) = extractRegisterFromList model index
+
           let newElem = {
             myElem with
               Enabled = isChecked;
           }
           
           let newRegisters = 
-            List.filter (fun a -> a.UIIndex <> index) model.Registers
-            |> List.append [newElem]
-            |> List.sortWith (fun a b -> a.UIIndex - b.UIIndex)
-          {
-            model with
-              Registers = newRegisters
-          }
-      | UpdateRegisterValue(index, obj) ->
-        let strValue =  (obj?srcElement?value).ToString()
-        if strValue = "" then
-          model
-        else
-          let myElem = model.Registers.[index]
-          let newElem = {
-            myElem with
-              Value = int strValue;
-          }
-          let newRegisters = 
-            List.filter (fun a -> a.UIIndex <> index) model.Registers
-            |> List.append [newElem]
-            |> List.sortWith (fun a b -> a.UIIndex - b.UIIndex)
+            List.append otherRegisters [newElem]
+            |> sortRegisters
 
           {
             model with
               Registers = newRegisters
           }
+
+      | UpdateRegisterValue(index, obj) ->
+        let strValue =  (obj?srcElement?value).ToString()
+        if strValue = "" then
+          model
+        else
+          let (myElem, otherRegisters) = extractRegisterFromList model index
+          
+          let newElem = {
+            myElem with
+              Value = int strValue;
+          }
+
+          let newRegisters = 
+            List.append otherRegisters [newElem]
+            |> sortRegisters
+
+          {
+            model with
+              Registers = newRegisters
+          }
+
       | RemoveRegisterValue index ->
-        let myElem = model.Registers.[index]
-        let otherRegisters = List.filter (fun a -> a.UIIndex <> index) model.Registers
+        let (myElem, otherRegisters) = extractRegisterFromList model index
         let updatedList = 
           otherRegisters 
           |> List.map (fun e -> if e.UIIndex <= index then e else { e with UIIndex = e.UIIndex - 1} )

@@ -47,6 +47,8 @@ module ViewMain =
       | CreateInput -> 
           printfn "Should create input"
           model
+      | RegisterAction registerAction ->
+        processRegisterAction model registerAction
       | NotImplemented ->
           Browser.window.alert "TODO"
           model
