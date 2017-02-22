@@ -14,6 +14,7 @@ open Fable.Arch.Html
 open View.ViewModel
 open View.RegisterUI
 open View.InputUI
+open View.RunUI
 
 
 module ViewMain =
@@ -22,14 +23,9 @@ module ViewMain =
 
   let update (model : View.ViewModel.Model) (action : View.ViewModel.Action) =
     match action with
-      | Run -> 
-          printfn "Should run"
-          model
+      | Run -> processRunAction model
       | InputAction inputAction -> processInputAction model inputAction
       | RegisterAction registerAction -> processRegisterAction model registerAction
-      | NotImplemented ->
-          Browser.window.alert "TODO"
-          model
 
   let view model =
     div
@@ -122,6 +118,7 @@ module ViewMain =
                       ]
                       []
                   ]
+                (viewRun model)
               ]
           ]
       ]

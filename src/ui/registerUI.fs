@@ -94,7 +94,6 @@ module RegisterUI =
             else
               0
           let newRegister = {
-            Index = 0;
             Value = 0;
             Enabled = false;
             UIIndex = newUIIndex;

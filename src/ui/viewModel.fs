@@ -5,7 +5,6 @@ open System.IO
 module ViewModel =
 
   type Register = {
-    Index : int;
     Enabled : bool;
     Value : int;
     UIIndex : int;
@@ -38,7 +37,6 @@ module ViewModel =
     | InputAction of InputAction
     | RegisterAction of RegisterAction
     | Run
-    | NotImplemented
 
   let createDefaultModel () =
     {

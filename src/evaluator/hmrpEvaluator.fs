@@ -402,7 +402,7 @@ module HmrpEvaluator =
                 | LabelLine label -> NewState <| skipLine machineState
                 | InstructionLine instruction -> runInstruction machineState instruction
         else
-            End "Program has ended. There is no more line to run."
+            End "There is no more line to run."
 
     let run initialMachineState =
         let mutable keepRunning = true
@@ -431,6 +431,14 @@ module HmrpEvaluator =
             printState state
 
     let stringArrayToProgramList (lines : string array) =
+        let results = new List<ProgramLine>()
+        for i in 0 .. (lines.Length - 1) do
+            let line = lines.[i]
+            let result = parseLine line i
+            results.Add(result)
+        let returnedValue = Seq.toList results in returnedValue
+
+    let stringListToProgramList (lines : string list) =
         let results = new List<ProgramLine>()
         for i in 0 .. (lines.Length - 1) do
             let line = lines.[i]
