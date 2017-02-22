@@ -1,13 +1,18 @@
--- Type your code here
-    INBOX
-    COPYTO 	0
+-- Simple loop that count to 0
+ INBOX
+ COPYTO 0
+ JUMPZ b
+ JUMPN d
 c:
-    JUMPZ b
-    JUMPN a
-    OUTBOX
-    BUMPDN 	0
-    JUMP 	c
+ JUMPZ b
+ OUTBOX
+ BUMPDN 0
+ JUMP c
+d:
+ JUMPZ b
+ OUTBOX
+ BUMPUP 0
+ JUMP d
 b:
-    OUTBOX
+ OUTBOX
 a:
- 
