@@ -73,9 +73,7 @@ module InputUI =
             model with
               Inputs = newInputs
           }
-      
-
-
+  
   let private getInputValuesAttributes (input_model : Input) =
     let onInputValueChange = onChange (fun a -> InputAction <| UpdateInputValue (input_model.UIIndex, a))
     [ 
