@@ -348,6 +348,7 @@ module HmrpEvaluator =
                             machineState with 
                                 CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
                                 Registers = allRegistersUpdate
+                                HumanValue = Some newValue
                         }               
                     | None -> ResultF.ErrorF <| sprintf "Cannot increment from register %i because register has no value." oldRegister.Index
         ResultF.bind f oldRegisterOrError
@@ -370,6 +371,7 @@ module HmrpEvaluator =
                             machineState with 
                                 CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
                                 Registers = allRegistersUpdate
+                                HumanValue = Some newValue
                         }
                     | None -> ResultF.ErrorF <| sprintf "Cannot increment from register %i because register has no value." oldRegister.Index
         ResultF.bind f oldRegisterOrError
