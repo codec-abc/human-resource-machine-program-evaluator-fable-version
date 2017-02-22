@@ -18,7 +18,8 @@ module Main =
 
   type Register = {
     Index : int;
-    Value : int option;
+    Enabled : bool;
+    Value : int;
     UIIndex : int;
   }
 
@@ -49,13 +50,19 @@ module Main =
       | CreateRegister -> 
           let newUIIndex = 
             if model.Registers.Length > 0 then
-              model.Registers |> List.map (fun a -> a.UIIndex) |> List.max
+              let max = 
+                model.Registers 
+                |> List.map (fun a -> a.UIIndex) 
+                |> List.max
+
+              max + 1
             else
               0
           printfn "Should create a new register"
           let newRegister = {
             Index = 0;
-            Value = None;
+            Value = 0;
+            Enabled = false;
             UIIndex = newUIIndex;
           }
           { 
@@ -70,17 +77,30 @@ module Main =
           model
       | UpdateRegisterState (index, obj) ->
           let isChecked : bool = (obj?srcElement?checked).ToString() = "true"
-          Browser.window.alert "TODO"
-          model
+          let myElem = model.Registers.[index]
+          let newElem = {
+            myElem with
+              Enabled = isChecked;
+          }
+          
+          let newRegisters = 
+            List.filter (fun a -> a <> myElem) model.Registers
+            |> List.append [newElem]
+            |> List.sortWith (fun a b -> a.UIIndex - b.UIIndex)
+          {
+            model with
+              Registers = newRegisters
+          }
       | NotImplemented ->
           Browser.window.alert "TODO"
           model
 
   let viewSingleRegister register =
     let inputAttributes = 
-      if Option.isSome register.Value then
+      if register.Enabled then
         [ 
           attribute "type" "number"
+          attribute "value" (register.Value.ToString())
           Style [
             ("width", "50px")
           ]
@@ -89,6 +109,7 @@ module Main =
         [ 
           attribute "type" "number" 
           attribute "disabled" "true"
+          attribute "value" (register.Value.ToString())
           Style [
             ("width", "50px")
           ]
