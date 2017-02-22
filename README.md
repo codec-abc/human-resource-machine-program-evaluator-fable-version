@@ -28,7 +28,7 @@ webpack
 
 Once compiled open public/index.html
 
-### To Auto Compile/WebPack/Reload on save
+### To Auto-Compile/WebPack/Reload on save
 
 Run only the first time 
 ```bash
