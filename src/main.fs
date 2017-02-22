@@ -42,7 +42,8 @@ module Main =
     | CreateRegister
     | CreateInput
     | Run
-    | UpdateRegisterState of int * obj // index * enable/disabled state
+    | UpdateRegisterState of int * obj // index * enable/disabled
+    | UpdateRegisterValue of int * obj // index * value
     | NotImplemented
 
   let update model action =
@@ -58,7 +59,6 @@ module Main =
               max + 1
             else
               0
-          printfn "Should create a new register"
           let newRegister = {
             Index = 0;
             Value = 0;
@@ -91,14 +91,35 @@ module Main =
             model with
               Registers = newRegisters
           }
+      | UpdateRegisterValue(index, obj) ->
+          let strValue =  (obj?srcElement?value).ToString()
+          if strValue = "" then
+            model
+          else
+            let myElem = model.Registers.[index]
+            let newElem = {
+              myElem with
+                Value = int strValue;
+            }
+            let newRegisters = 
+              List.filter (fun a -> a <> myElem) model.Registers
+              |> List.append [newElem]
+              |> List.sortWith (fun a b -> a.UIIndex - b.UIIndex)
+
+            {
+              model with
+                Registers = newRegisters
+            }
       | NotImplemented ->
           Browser.window.alert "TODO"
           model
 
   let viewSingleRegister register =
     let inputAttributes = 
+      let onRegisterValueChange = onChange (fun a -> UpdateRegisterValue (register.UIIndex, a))
       if register.Enabled then
         [ 
+          onRegisterValueChange
           attribute "type" "number"
           attribute "value" (register.Value.ToString())
           Style [
@@ -107,6 +128,7 @@ module Main =
         ]
       else
         [ 
+          onRegisterValueChange
           attribute "type" "number" 
           attribute "disabled" "true"
           attribute "value" (register.Value.ToString())
