@@ -30,12 +30,12 @@ Once compiled open public/index.html
 
 ### To Auto Compile/WebPack/Reload on save
 
-run only first time 
+Run only the first time 
 ```bash
 npm install -g live-server
 ```
 
-then in a different terminal for each command 
+Then in a different terminal for each command 
 
 ```
 fable -w
