@@ -18,7 +18,9 @@ module RunUI =
   let getLines () =
     let mutable lines = []
     let w = Browser.window?myCodeMirror?doc
-    w?eachLine (fun l -> lines <- List.append lines [l]) |> ignore
+    w?eachLine (fun l ->
+      let lineText = l?text
+      lines <- List.append lines [lineText.ToString()]) |> ignore
     lines
 
   let buildRegisters model = 
