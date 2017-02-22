@@ -44,6 +44,7 @@ module Main =
     | Run
     | UpdateRegisterState of int * obj // index * enable/disabled
     | UpdateRegisterValue of int * obj // index * value
+    | RemoveRegisterValue of int //index
     | NotImplemented
 
   let update model action =
@@ -84,7 +85,7 @@ module Main =
           }
           
           let newRegisters = 
-            List.filter (fun a -> a <> myElem) model.Registers
+            List.filter (fun a -> a.UIIndex <> index) model.Registers
             |> List.append [newElem]
             |> List.sortWith (fun a b -> a.UIIndex - b.UIIndex)
           {
@@ -102,7 +103,7 @@ module Main =
                 Value = int strValue;
             }
             let newRegisters = 
-              List.filter (fun a -> a <> myElem) model.Registers
+              List.filter (fun a -> a.UIIndex <> index) model.Registers
               |> List.append [newElem]
               |> List.sortWith (fun a b -> a.UIIndex - b.UIIndex)
 
@@ -110,12 +111,22 @@ module Main =
               model with
                 Registers = newRegisters
             }
+      | RemoveRegisterValue index ->
+        let myElem = model.Registers.[index]
+        let otherRegisters = List.filter (fun a -> a.UIIndex <> index) model.Registers
+        let updatedList = 
+          otherRegisters 
+          |> List.map (fun e -> if e.UIIndex <= index then e else { e with UIIndex = e.UIIndex - 1} )
+        {
+          model with
+            Registers = updatedList
+        }
       | NotImplemented ->
           Browser.window.alert "TODO"
           model
 
   let viewSingleRegister register =
-    let inputAttributes = 
+    let inputValueAttributes = 
       let onRegisterValueChange = onChange (fun a -> UpdateRegisterValue (register.UIIndex, a))
       if register.Enabled then
         [ 
@@ -136,18 +147,39 @@ module Main =
             ("width", "50px")
           ]
         ]
+    
+    let inputStateAttributes =
+      if register.Enabled then
+        [
+          attribute "type" "checkbox"
+          property "checked" "true"
+          onChange (fun a -> UpdateRegisterState (register.UIIndex, a))
+        ]
+      else
+        [
+          attribute "type" "checkbox"
+          onChange (fun a -> UpdateRegisterState (register.UIIndex, a))
+        ]
 
     div
       []
       [
-        text ""
-        input
-          [
-            attribute "type" "checkbox"
-            onChange (fun a -> UpdateRegisterState (register.UIIndex, a))
-          ]
+        text <| "R" + register.UIIndex.ToString() + ": "
         text "Value: "
-        input inputAttributes     
+        input inputStateAttributes
+        input inputValueAttributes
+        button
+          [
+            onMouseClick (fun a -> RemoveRegisterValue register.UIIndex)
+          ]
+          [
+            i
+              [
+                  classy "fa fa-trash-o" 
+                  attribute "aria-hidden" "true"
+              ]
+              []
+          ]
       ]
 
   let viewRegisters model = 
