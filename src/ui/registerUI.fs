@@ -71,9 +71,6 @@ module RegisterUI =
               []
           ]
       ]
-
-  let viewRegisters model = 
-    List.map (fun e -> viewSingleRegister e)  model.Registers
   
   let private extractRegisterFromList model index =
     let myElem = model.Registers.[index]
@@ -82,6 +79,9 @@ module RegisterUI =
 
   let private sortRegisters (registers : Register list) = 
     List.sortWith (fun a b -> a.UIIndex - b.UIIndex) registers
+
+  let viewRegisters model = 
+    List.map (fun e -> viewSingleRegister e)  model.Registers
 
   let processRegisterAction (model : View.ViewModel.Model) action = 
     match action with
