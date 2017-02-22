@@ -108,7 +108,7 @@ module RegisterUI =
           }
 
       | UpdateRegisterState (index, obj) ->
-          let isChecked : bool = (obj?srcElement?checked).ToString() = "true"
+          let isChecked : bool = (obj?target?checked).ToString() = "true"
 
           let (myElem, otherRegisters) = extractRegisterFromList model index
 
@@ -127,7 +127,7 @@ module RegisterUI =
           }
 
       | UpdateRegisterValue(index, obj) ->
-        let strValue =  (obj?srcElement?value).ToString()
+        let strValue =  (obj?target?value).ToString()
         if strValue = "" then
           model
         else
