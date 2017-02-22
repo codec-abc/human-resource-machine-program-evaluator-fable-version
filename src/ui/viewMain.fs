@@ -86,20 +86,6 @@ module ViewMain =
               ]
           ]
         div
-          [ classy "seven wide column" ]
-          [
-            div
-              [classy "ui segment"]
-              [
-                h2
-                  []
-                  [text "Code"]
-                div
-                  [ attribute "id" "ide"]
-                  []
-              ]
-          ]
-        div
           [classy "three wide column"]
           [
             div
@@ -122,6 +108,20 @@ module ViewMain =
                       []
                   ]
                 (viewRun model)
+              ]
+          ]
+        div
+          [ classy "seven wide column" ]
+          [
+            div
+              [classy "ui segment"]
+              [
+                h2
+                  []
+                  [text "Code"]
+                div
+                  [ attribute "id" "ide"]
+                  []
               ]
           ]
       ]
