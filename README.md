@@ -23,3 +23,11 @@ webpack
 ### Run
 
 Once compiled open public/index.html
+
+### To Auto Compile/WebPack/Reload on save
+
+```
+fable -w
+webpack -w
+live-server # (you need to run at least once: npm install -g live-server)
+```
