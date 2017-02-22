@@ -66,7 +66,6 @@ module RunUI =
         lastState.Outputs
       else
         []
-    Browser.window.console.log programStoppedReason
     {
       model with
         CauseOfStop = Some programStoppedReason;
