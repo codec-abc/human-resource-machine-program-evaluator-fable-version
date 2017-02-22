@@ -43,7 +43,7 @@ webpack -w
 live-server
 ```
 
-### Useful links
+## Useful links
 
 * [Fable](https://github.com/fable-compiler/)
 * [Fable-Arch](http://fable.io/fable-arch/#/sample/hello-world)
