@@ -122,7 +122,7 @@ module RunUI =
                     onChange (fun a -> RunAction <| ChangeBrowsedState a)
                   ]
                 br []
-                text <| "State " + (evalResult.CurrentlySelectedState.ToString()) + "/" + ((evalResult.EvaluationStates.Length - 1).ToString())
+                text <| "State " + (evalResult.CurrentlySelectedState + 1).ToString() + "/" + ((evalResult.EvaluationStates.Length).ToString())
                 h3
                   []
                   [text "Outputs: "]
@@ -138,7 +138,7 @@ module RunUI =
                 h3
                   []
                   [text "Current Line: "]
-                text <| selectedState.CurrentInstructionLine.ToString()
+                text <| (selectedState.CurrentInstructionLine + 1).ToString()
                 // TODO : add Registers ?
               ]
           div [] myDiv 
