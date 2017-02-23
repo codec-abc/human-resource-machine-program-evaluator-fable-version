@@ -154,8 +154,6 @@ module ViewMain =
                                 "mode" ==> "hmrp"
                                 "lineNumbers" ==> true
                               ]
-                          Browser.window.console.log Browser.window?HasInit
-
                           if not <| unbox(Browser.window?HasInit) then
                             Browser.window.setTimeout(
                               (fun w ->
