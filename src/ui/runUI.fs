@@ -120,6 +120,12 @@ module RunUI =
                     attribute "max" ((evalResult.EvaluationStates.Length - 1).ToString())
                     attribute "value" (evalResult.CurrentlySelectedState.ToString())
                     onChange (fun a -> RunAction <| ChangeBrowsedState a)
+                    hook 
+                      "hook"
+                      (HookHelper.CreateHook (fun node propName ->
+                        node?max <- ((evalResult.EvaluationStates.Length - 1).ToString())
+                        node?value <- (evalResult.CurrentlySelectedState.ToString())
+                        Browser.window.console.log propName))
                   ]
                 br []
                 text <| "State " + (evalResult.CurrentlySelectedState + 1).ToString() + "/" + ((evalResult.EvaluationStates.Length).ToString())
