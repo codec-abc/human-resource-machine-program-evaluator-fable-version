@@ -16,12 +16,19 @@ module RegisterUI =
 
   let private getInputValuesAttributes (register : Register) =
     let onRegisterValueChange = onChange (fun a -> RegisterAction <| UpdateRegisterValue (register.UIIndex, a))
+    
     let basicAttributes =
       [ 
         onRegisterValueChange
         attribute "type" "number"
         attribute "value" (register.Value.ToString())
         Style [("width", "50px")]
+        hook 
+          "hook"
+          (HookHelper.CreateHook (fun node propName ->
+            node?value <- (register.Value.ToString())
+            )
+          )
       ]
     let moreAttributes = 
       if register.Enabled then
@@ -47,9 +54,36 @@ module RegisterUI =
         callback
       ]
   
-  let private viewSingleRegister register =
+  let private viewSingleRegister register nbOfRegister =
     let inputValueAttributes = getInputValuesAttributes register
     let inputStateAttributes = getInputStateAttributes register
+
+    let upButtonAttributes =
+      if register.UIIndex = 0 then
+        [
+          attribute "disabled" "true"
+          classy "ui button"
+          onMouseClick (fun a -> RegisterAction <| MoveRegisterValueUp register.UIIndex)
+        ]
+      else
+        [
+          classy "ui button"
+          onMouseClick (fun a -> RegisterAction <| MoveRegisterValueUp register.UIIndex)
+        ]
+
+    let downButtonAttributes =
+      if register.UIIndex = nbOfRegister - 1 then
+        [
+          attribute "disabled" "true"
+          classy "ui button"
+          onMouseClick (fun a -> RegisterAction <| MoveRegisterValueDown register.UIIndex)
+        ]
+      else
+        [
+          classy "ui button"
+          onMouseClick (fun a -> RegisterAction <| MoveRegisterValueDown register.UIIndex)
+        ]
+
     div
       []
       [
@@ -59,6 +93,7 @@ module RegisterUI =
         input inputValueAttributes
         button
           [
+            classy "ui button"
             onMouseClick (fun a -> RegisterAction <| RemoveRegisterValue register.UIIndex)
           ]
           [
@@ -69,21 +104,88 @@ module RegisterUI =
               ]
               []
           ]
+        button
+          upButtonAttributes
+          [
+            i 
+              [
+                classy "fa fa-arrow-up"
+              ]
+              []
+          ]
+        button
+          downButtonAttributes
+          [
+            i 
+              [
+                classy "fa fa-arrow-down"
+              ]
+              []
+          ]
       ]
   
-  let private extractRegisterFromList model index =
-    let myElem = model.Registers.[index]
-    let otherRegisters = List.filter (fun (a : Register) -> a.UIIndex <> index) model.Registers
+  let private extractRegisterFromList (aList : Register list) (myElem : Register) =
+    let otherRegisters = List.filter (fun (a : Register) -> a.UIIndex <> myElem.UIIndex) aList
     (myElem, otherRegisters)
 
   let private sortRegisters (registers : Register list) = 
     List.sortWith (fun (a : Register) (b : Register) -> a.UIIndex - b.UIIndex) registers
 
-  let viewRegisters model = 
-    List.map viewSingleRegister model.Registers
+  let viewRegisters model =
+    List.map (fun a -> viewSingleRegister a model.Registers.Length) model.Registers
 
   let processRegisterAction (model : View.ViewModel.Model) action = 
     match action with
+      | MoveRegisterValueDown index ->
+        let (elemToMoveDown, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
+        let (elemToMoveUp, listExcept2) = extractRegisterFromList otherRegisters model.Registers.[index + 1]
+
+        let first = {
+          elemToMoveDown with
+            Register.UIIndex = elemToMoveDown.UIIndex + 1;
+        }
+
+        let second = {
+          elemToMoveUp with
+            Register.UIIndex = elemToMoveUp.UIIndex - 1;
+        }
+
+        let newRegisters = 
+          listExcept2
+            |> List.append [first]
+            |> List.append [second]
+            |> sortRegisters
+
+        {
+          model with
+            Registers = newRegisters
+        }
+
+      | MoveRegisterValueUp index ->
+        let (elemToMoveUp, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
+        let (elemToMoveDown, listExcept2) = extractRegisterFromList otherRegisters model.Registers.[index - 1]
+
+        let first = {
+          elemToMoveDown with
+            Register.UIIndex = elemToMoveDown.UIIndex + 1;
+        }
+
+        let second = {
+          elemToMoveUp with
+            Register.UIIndex = elemToMoveUp.UIIndex - 1;
+        }
+
+        let newRegisters = 
+          listExcept2
+            |> List.append [first]
+            |> List.append [second]
+            |> sortRegisters
+
+        {
+          model with
+            Registers = newRegisters
+        }
+
       | CreateRegister -> 
           let newUIIndex = 
             if model.Registers.Length > 0 then
@@ -106,7 +208,7 @@ module RegisterUI =
       | UpdateRegisterState (index, obj) ->
           let isChecked : bool = (obj?target?checked).ToString() = "true"
 
-          let (myElem, otherRegisters) = extractRegisterFromList model index
+          let (myElem, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
 
           let newElem = {
             myElem with
@@ -127,7 +229,7 @@ module RegisterUI =
         if strValue = "" then
           model
         else
-          let (myElem, otherRegisters) = extractRegisterFromList model index
+          let (myElem, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
           
           let newElem = {
             myElem with
@@ -144,7 +246,7 @@ module RegisterUI =
           }
 
       | RemoveRegisterValue index ->
-        let (myElem, otherRegisters) = extractRegisterFromList model index
+        let (myElem, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
         let updatedList = 
           otherRegisters 
           |> List.map (fun e -> if e.UIIndex <= index then e else { e with UIIndex = e.UIIndex - 1} )

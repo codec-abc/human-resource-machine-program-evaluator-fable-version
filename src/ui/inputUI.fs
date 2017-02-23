@@ -93,6 +93,7 @@ module InputUI =
         input inputValueAttributes
         button
           [
+            classy "ui button"
             onMouseClick (fun a -> InputAction <| RemoveInputValue input_model.UIIndex)
           ]
           [

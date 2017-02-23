@@ -27,6 +27,8 @@ module ViewModel =
     | UpdateRegisterState of int * obj // index * enable/disabled
     | UpdateRegisterValue of int * obj // index * value
     | RemoveRegisterValue of int //index
+    | MoveRegisterValueDown of int //index
+    | MoveRegisterValueUp of int //index
     | CreateRegister
 
   type InputAction =
