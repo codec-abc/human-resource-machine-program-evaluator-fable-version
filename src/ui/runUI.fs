@@ -49,8 +49,8 @@ module RunUI =
   let processRunAction model action =
     match action with
       | ChangeBrowsedState obj ->
-        let newIndex : int =  (Browser.window?parseInt (unbox(obj?target?value) : int)) :?> int
-
+        let mutable newIndex : int = (Browser.window?parseInt (unbox(obj?target?value) : int)) :?> int
+        newIndex <- newIndex - 1
         let evalResult = Some <| {
           model.EvaluationResult.Value with
             CurrentlySelectedState = newIndex;
@@ -116,19 +116,36 @@ module RunUI =
                 input
                   [
                     attribute "type" "range"
-                    attribute "min" "0"
-                    attribute "max" ((evalResult.EvaluationStates.Length - 1).ToString())
-                    attribute "value" (evalResult.CurrentlySelectedState.ToString())
+                    attribute "min" "1"
+                    attribute "max" ((evalResult.EvaluationStates.Length).ToString())
+                    attribute "value" ((evalResult.CurrentlySelectedState + 1).ToString())
                     onChange (fun a -> RunAction <| ChangeBrowsedState a)
                     hook 
                       "hook"
                       (HookHelper.CreateHook (fun node propName ->
-                        node?max <- ((evalResult.EvaluationStates.Length - 1).ToString())
-                        node?value <- (evalResult.CurrentlySelectedState.ToString())
-                        Browser.window.console.log propName))
+                        node?max <- ((evalResult.EvaluationStates.Length).ToString())
+                        node?value <- ((evalResult.CurrentlySelectedState + 1).ToString())
+                        )
+                      )
                   ]
                 br []
-                text <| "State " + (evalResult.CurrentlySelectedState + 1).ToString() + "/" + ((evalResult.EvaluationStates.Length).ToString())
+                text <| "State "
+                input
+                  [
+                    attribute "type" "number"
+                    attribute "min" "1"
+                    attribute "max" ((evalResult.EvaluationStates.Length).ToString())
+                    attribute "value" <| (evalResult.CurrentlySelectedState + 1).ToString() 
+                    onChange (fun a -> RunAction <| ChangeBrowsedState a)
+                    hook 
+                      "hook2"
+                      (HookHelper.CreateHook (fun node propName ->
+                        node?max <- ((evalResult.EvaluationStates.Length).ToString())
+                        node?value <- ((evalResult.CurrentlySelectedState + 1).ToString())
+                        )
+                      )
+                  ]
+                text <| "/" + ((evalResult.EvaluationStates.Length).ToString())
                 h3
                   []
                   [text "Outputs: "]
