@@ -46,43 +46,58 @@ module RunUI =
       result <- List.append result [inputUIModel.Value]
     result
     
-  let processRunAction model =
-    let lines = getLines()
-    let parsedLines = HmrpEvaluator.stringListToProgramList lines
-    let programInitialState = HmrpEvaluator.defaultMachineState
-    let registers = buildRegisters model
-    let inputs = buildInputs model
+  let processRunAction model action =
+    match action with
+      | ChangeBrowsedState obj ->
+        let newIndex : int =  (Browser.window?parseInt (unbox(obj?target?value) : int)) :?> int
 
-    let state = {
-      programInitialState with
-        Inputs = inputs;
-        Registers = registers;
-        ProgramLines = parsedLines;
-    }
-    let (allStates, programStoppedReason) = HmrpEvaluator.run state
-    let outputs =
-      if allStates.Length > 0 then
-        let lastState = allStates |> List.rev|> List.head
-        lastState.Outputs
-      else
-        []
+        let evalResult = Some <| {
+          model.EvaluationResult.Value with
+            CurrentlySelectedState = newIndex;
+        }
+
+        {
+          model with
+            EvaluationResult = evalResult;
+        }
+      | Run ->
+        let lines = getLines()
+        let parsedLines = HmrpEvaluator.stringListToProgramList lines
+        let programInitialState = HmrpEvaluator.defaultMachineState
+        let registers = buildRegisters model
+        let inputs = buildInputs model
+
+        let state = {
+          programInitialState with
+            Inputs = inputs;
+            Registers = registers;
+            ProgramLines = parsedLines;
+        }
+        let (allStates, programStoppedReason) = HmrpEvaluator.run state
+        let outputs =
+          if allStates.Length > 0 then
+            let lastState = allStates |> List.rev|> List.head
+            lastState.Outputs
+          else
+            []
     
-    let evaluationResult = {
-      CauseOfStop = programStoppedReason;
-      EvaluationStates = allStates;
-      CurrentlySelectedState = allStates.Length - 1;
-    }
+        let evaluationResult = {
+          CauseOfStop = programStoppedReason;
+          EvaluationStates = allStates;
+          CurrentlySelectedState = allStates.Length - 1;
+        }
 
-    {
-      model with
-        EvaluationResult = Some evaluationResult;
-    }
+        {
+          model with
+            EvaluationResult = Some evaluationResult;
+        }
 
   let viewRun model =
     match model.EvaluationResult with
       | None -> div [] []
       | Some evalResult ->
           let selectedState = evalResult.EvaluationStates.[evalResult.CurrentlySelectedState]
+          printfn "test"
           let outputs = HmrpEvaluator.listToString selectedState.Outputs 
           let inputs = HmrpEvaluator.listToString selectedState.Inputs
           let humanValueAsStr =
@@ -105,6 +120,7 @@ module RunUI =
                     attribute "min" "0"
                     attribute "max" ((evalResult.EvaluationStates.Length - 1).ToString())
                     attribute "value" (evalResult.CurrentlySelectedState.ToString())
+                    onChange (fun a -> RunAction <| ChangeBrowsedState a)
                   ]
                 br []
                 text <| "State " + (evalResult.CurrentlySelectedState.ToString()) + "/" + ((evalResult.EvaluationStates.Length - 1).ToString())

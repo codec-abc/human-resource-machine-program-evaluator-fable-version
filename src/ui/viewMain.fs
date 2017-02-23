@@ -20,7 +20,7 @@ module ViewMain =
 
   let update (model : View.ViewModel.Model) (action : View.ViewModel.Action) =
     match action with
-      | Run -> processRunAction model
+      | RunAction action -> processRunAction model action
       | InputAction inputAction -> processInputAction model inputAction
       | RegisterAction registerAction -> processRegisterAction model registerAction
 
@@ -97,7 +97,7 @@ module ViewMain =
                 button
                   [
                     classy "ui button"
-                    onMouseClick (fun e -> Run)
+                    onMouseClick (fun e -> RunAction Run)
                   ]
                   [
                     i

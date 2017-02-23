@@ -34,6 +34,10 @@ module ViewModel =
     | UpdateInputValue of int * obj // index * enable/disabled
     | RemoveInputValue of int // index
 
+  type RunAction =
+    | Run
+    | ChangeBrowsedState of obj
+
   type Model = {
     Registers : Register list;
     Inputs : Input list;
@@ -43,7 +47,7 @@ module ViewModel =
   type Action =
     | InputAction of InputAction
     | RegisterAction of RegisterAction
-    | Run
+    | RunAction of RunAction
 
   let createDefaultModel () =
     {
