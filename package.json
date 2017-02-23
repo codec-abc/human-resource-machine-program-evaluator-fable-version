@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "fable-arch": "^0.10.0",
+    "fable-arch": "^0.10.1",
     "fable-compiler": "^0.7.42",
     "fable-import": "0.0.3",
     "fable-import-virtualdom": "^0.8.1",
