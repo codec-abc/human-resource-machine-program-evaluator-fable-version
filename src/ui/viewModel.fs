@@ -35,6 +35,8 @@ module ViewModel =
     | CreateInput
     | UpdateInputValue of int * obj // index * enable/disabled
     | RemoveInputValue of int // index
+    | MoveInputValueDown of int //index
+    | MoveInputValueUp of int //index
 
   type RunAction =
     | Run
