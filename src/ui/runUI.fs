@@ -52,7 +52,8 @@ module RunUI =
         let mutable newIndex : int = (Browser.window?parseInt (unbox(obj?target?value) : int)) :?> int
         newIndex <- newIndex - 1
 
-        if newIndex < 0 || newIndex >= model.EvaluationResult.Value.EvaluationStates.Length then
+
+        if newIndex < 0 || newIndex >= model.EvaluationResult.Value.EvaluationStates.Length || newIndex <> newIndex then
           model
         else
           let evalResult = Some <| {
@@ -123,7 +124,7 @@ module RunUI =
                     attribute "min" "1"
                     attribute "max" ((evalResult.EvaluationStates.Length).ToString())
                     attribute "value" ((evalResult.CurrentlySelectedState + 1).ToString())
-                    onChange (fun a -> RunAction <| ChangeBrowsedState a)
+                    onInput (fun a -> RunAction <| ChangeBrowsedState a)
                     hook 
                       "hook"
                       (HookHelper.CreateHook (fun node propName ->
