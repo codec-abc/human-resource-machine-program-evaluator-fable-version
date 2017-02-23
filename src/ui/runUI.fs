@@ -97,7 +97,6 @@ module RunUI =
       | None -> div [] []
       | Some evalResult ->
           let selectedState = evalResult.EvaluationStates.[evalResult.CurrentlySelectedState]
-          printfn "test"
           let outputs = HmrpEvaluator.listToString selectedState.Outputs 
           let inputs = HmrpEvaluator.listToString selectedState.Inputs
           let humanValueAsStr =
