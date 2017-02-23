@@ -66,33 +66,64 @@ module RunUI =
         lastState.Outputs
       else
         []
+    
+    let evaluationResult = {
+      CauseOfStop = programStoppedReason;
+      EvaluationStates = allStates;
+      CurrentlySelectedState = allStates.Length - 1;
+    }
+
     {
       model with
-        CauseOfStop = Some programStoppedReason;
-        Outputs = outputs;
+        EvaluationResult = Some evaluationResult;
     }
 
   let viewRun model =
-    let outputs = 
-      model.Outputs 
-      |> List.map (fun a -> a.ToString())
-      |> List.fold (fun acc elem -> acc + " " + elem) ""
-    
-    let myDiv =
-      match model.CauseOfStop with
-      | Some endCauseValue ->
-        [
-          h3
-            []
-            [text "Stop cause: "]
-          text endCauseValue
-          h3
-            []
-            [text "Outputs: "]
-          text outputs
-        ]
-      | None -> []
-    
-    div
-      []
-      myDiv 
+    match model.EvaluationResult with
+      | None -> div [] []
+      | Some evalResult ->
+          let selectedState = evalResult.EvaluationStates.[evalResult.CurrentlySelectedState]
+          let outputs = HmrpEvaluator.listToString selectedState.Outputs 
+          let inputs = HmrpEvaluator.listToString selectedState.Inputs
+          let humanValueAsStr =
+            match selectedState.HumanValue with
+            | None -> "None"
+            | Some x -> x.ToString()
+          
+          let myDiv =
+              [
+                h3
+                  []
+                  [text "Stop cause: "]
+                text evalResult.CauseOfStop
+                h3
+                  []
+                  [text "States"]
+                input
+                  [
+                    attribute "type" "range"
+                    attribute "min" "0"
+                    attribute "max" ((evalResult.EvaluationStates.Length - 1).ToString())
+                    attribute "value" (evalResult.CurrentlySelectedState.ToString())
+                  ]
+                br []
+                text <| "State " + (evalResult.CurrentlySelectedState.ToString()) + "/" + ((evalResult.EvaluationStates.Length - 1).ToString())
+                h3
+                  []
+                  [text "Outputs: "]
+                text outputs
+                h3
+                  []
+                  [text "Inputs: "]
+                text inputs
+                h3
+                  []
+                  [text "Human Value: "]
+                text humanValueAsStr
+                h3
+                  []
+                  [text "Current Line: "]
+                text <| selectedState.CurrentInstructionLine.ToString()
+                // TODO : add Registers ?
+              ]
+          div [] myDiv 

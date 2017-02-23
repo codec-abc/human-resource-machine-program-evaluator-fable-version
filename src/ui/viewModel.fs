@@ -1,6 +1,8 @@
 namespace View
 
 open System.IO
+open Hmrp
+open Hmrp.HmrpEvaluator
 
 module ViewModel =
 
@@ -13,6 +15,12 @@ module ViewModel =
   type Input = {
     UIIndex : int;
     Value : int;
+  }
+
+  type EvaluationResult = {
+    CauseOfStop : string;
+    EvaluationStates : MachineState list;
+    CurrentlySelectedState : int;
   }
 
   type RegisterAction =
@@ -29,8 +37,7 @@ module ViewModel =
   type Model = {
     Registers : Register list;
     Inputs : Input list;
-    Outputs : int list;
-    CauseOfStop : string option;
+    EvaluationResult : EvaluationResult option;
   }
 
   type Action =
@@ -42,6 +49,5 @@ module ViewModel =
     {
       Registers = [];
       Inputs = [];
-      Outputs = [];
-      CauseOfStop = None;
+      EvaluationResult = None;
     }

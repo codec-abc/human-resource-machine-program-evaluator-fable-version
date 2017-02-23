@@ -22,14 +22,35 @@
  
         var observer = new MutationObserver(function(mutations) 
         {
+            var lines = 
+                "-- Simple loop that count to 0\n" +
+                " INBOX\n" +
+                " COPYTO 0\n" +
+                " JUMPZ b\n" +
+                " JUMPN d\n" +
+                "c:\n" +
+                " JUMPZ b\n" +
+                " OUTBOX\n" +
+                " BUMPDN 0\n" +
+                " JUMP c\n" +
+                "d:\n" +
+                " JUMPZ b\n" +
+                " OUTBOX\n" +
+                " BUMPUP 0\n" +
+                " JUMP d\n" +
+                "b:\n" +
+                " OUTBOX\n" +
+                "a:\n";
+
             var elem = document.getElementById("ide");
             if (elem != null)
             {
                 var codeConfig = 
                 {
                     theme : "monokai", 
-                    value : "-- Type your code here",
-                    mode  : "hmrp"
+                    value : lines,
+                    mode  : "hmrp",
+                    lineNumbers : true
                 };
 
                 window.myCodeMirror = CodeMirror(elem, codeConfig);
