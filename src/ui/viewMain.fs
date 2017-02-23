@@ -18,6 +18,26 @@ open View.RunUI
 
 module ViewMain =
 
+  let defaultLines = 
+    "-- Simple loop that count to 0\n" +
+    " INBOX\n" +
+    " COPYTO 0\n" +
+    " JUMPZ b\n" +
+    " JUMPN d\n" +
+    "c:\n" +
+    " JUMPZ b\n" +
+    " OUTBOX\n" +
+    " BUMPDN 0\n" +
+    " JUMP c\n" +
+    "d:\n" +
+    " JUMPZ b\n" +
+    " OUTBOX\n" +
+    " BUMPUP 0\n" +
+    " JUMP d\n" +
+    "b:\n" +
+    " OUTBOX\n" +
+    "a:\n"
+
   let update (model : View.ViewModel.Model) (action : View.ViewModel.Action) =
     match action with
       | RunAction action -> processRunAction model action
@@ -120,7 +140,32 @@ module ViewMain =
                   []
                   [text "Code"]
                 div
-                  [ attribute "id" "ide"]
+                  [ 
+                    attribute "id" "ide"
+                    hook 
+                      "hook"
+                      (HookHelper.CreateHook 
+                        (fun node propName otherNode ->
+                          let codeConfig = 
+                            createObj 
+                              [
+                                "theme" ==> "monokai"
+                                "value" ==> defaultLines
+                                "mode" ==> "hmrp"
+                                "lineNumbers" ==> true
+                              ]
+                          Browser.window.console.log Browser.window?HasInit
+
+                          if not <| unbox(Browser.window?HasInit) then
+                            Browser.window.setTimeout(
+                              (fun w ->
+                                Browser.window?HasInit <- true
+                                Browser.window?CodeMirror(node, codeConfig) |> ignore
+                              ),
+                              100) |> ignore
+                          else
+                            () ))
+                  ]
                   []
               ]
           ]
