@@ -141,6 +141,7 @@ module ViewMain =
                   [text "Code"]
                 div
                   [ 
+                    classy "ide"
                     attribute "id" "ide"
                     hook 
                       "hook"

@@ -1,0 +1,19 @@
+.CodeMirror {
+    height: 90%;
+}
+
+.column {
+    height: 100%;
+}
+
+.app {
+    height: 100%;
+}
+
+.ui.segment {
+    height: 100%;
+}
+
+.ide {
+    height: 100%;
+}
