@@ -162,7 +162,7 @@ module ViewMain =
                                 Browser.window?HasInit <- true
                                 Browser.window?myCodeMirror <- Browser.window?CodeMirror(node, codeConfig) |> ignore
                               ),
-                              100) |> ignore
+                              0) |> ignore
                           else
                             () ))
                   ]
