@@ -160,7 +160,7 @@ module ViewMain =
                             Browser.window.setTimeout(
                               (fun w ->
                                 Browser.window?HasInit <- true
-                                Browser.window?CodeMirror(node, codeConfig) |> ignore
+                                Browser.window?myCodeMirror <- Browser.window?CodeMirror(node, codeConfig) |> ignore
                               ),
                               100) |> ignore
                           else
