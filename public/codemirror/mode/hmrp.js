@@ -5,8 +5,8 @@ CodeMirror.defineMode("hmrp", function ()
 {
     var LabelPattern = "^(\\w+):$";
 
-    var InboxPattern  = "^(\\s+)INBOX(\\s*)(\\w*)$";
-    var OutboxPattern = "^(\\s+)OUTBOX(\\s*)(\\w*)$";
+    var InboxPattern  = "^(\\s+)INBOX(\\s*)$";
+    var OutboxPattern = "^(\\s+)OUTBOX(\\s*)$";
     var JumpZeroPattern = "^(\\s+)JUMPZ(\\s*)(\\w*)$";
     var JumpNonZeroPattern = "^(\\s+)JUMPN(\\s*)(\\w*)$";
     var JumpPattern = "^(\\s+)JUMP(\\s*)(\\w*)$";
@@ -29,17 +29,64 @@ CodeMirror.defineMode("hmrp", function ()
     var AddRegex = new RegExp(AddPattern, "i");
     var SubRegex = new RegExp(SubPattern, "i");
 
+    var JumpZeroShortPattern = "^(\\s+)JUMPZ(\\s+)$";
+    var JumpNonZeroShortPattern = "^(\\s+)JUMPN(\\s+)$";
+    var JumpShortPattern = "^(\\s+)JUMP(\\s+)$";
+
+    var CopyToShortPattern = "^(\\s+)COPYTO(\\s*)$";
+    var CopyFromShortPattern = "^(\\s+)COPYFROM(\\s*)$";
+    var BumpUpShortPattern = "^(\\s+)BUMPUP(\\s*)$";
+    var BumpDownShortPattern = "^(\\s+)BUMPDN(\\s*)$";
+    var AddShortPattern = "^(\\s+)ADD(\\s*)$";
+    var SubShortPattern = "^(\\s+)SUB(\\s*)$";
+
+    var JumpZeroShortRegex = new RegExp(JumpZeroShortPattern, "i");
+    var JumpNonZeroShortRegex = new RegExp(JumpNonZeroShortPattern, "i");
+    var JumpShortRegex = new RegExp(JumpShortPattern, "i");
+
+    var CopyToShortRegex = new RegExp(CopyToShortPattern, "i");
+    var CopyFromShortRegex = new RegExp(CopyFromShortPattern, "i");
+    var BumpUpShortRegex = new RegExp(BumpUpShortPattern, "i");
+    var BumpDownShortRegex = new RegExp(BumpDownShortPattern, "i");
+    var AddShortRegex = new RegExp(AddShortPattern, "i");
+    var SubShortRegex = new RegExp(SubShortPattern, "i");
+
     return {
         startState: function () 
         {
-            return {}
+            return {
+                isConsumingJumpEndLine : false,
+                isConsumingRegisterInstructionEndLine : false
+            }
         },
         token: function (stream, state) 
         {
+            if (state.isConsumingJumpEndLine)
+            {
+                while (!stream.eol())
+                {
+                    stream.next();
+                }
+                state.isConsumingJumpEndLine = false;
+                return "keyword";
+            }
+
+            if (state.isConsumingRegisterInstructionEndLine)
+            {
+                while (!stream.eol())
+                {
+                    stream.next();
+                }
+                state.isConsumingRegisterInstructionEndLine = false;
+                return "number";
+            }
+
             var currentLine = "";
+            var nbEatToken = 0;
             while (!stream.eol())
             {
                 currentLine = currentLine + stream.next();
+                nbEatToken++;
             }
 
             if (currentLine.match(LabelPattern))
@@ -47,12 +94,16 @@ CodeMirror.defineMode("hmrp", function ()
                 return 'property';
             }
             
-            var isInstruction =
+            var isSimpleInstruction =
                 currentLine.match(InboxRegex) ||
-                currentLine.match(OutboxRegex) ||
+                currentLine.match(OutboxRegex);
+            
+            var isJumpInstruction =
                 currentLine.match(JumpZeroRegex) ||
                 currentLine.match(JumpNonZeroRegex) ||
-                currentLine.match(JumpRegex) ||
+                currentLine.match(JumpRegex);
+
+            var isRegisterArgumentInstruction = 
                 currentLine.match(CopyToRegex) ||
                 currentLine.match(CopyFromRegex) ||
                 currentLine.match(BumpUpRegex) ||
@@ -60,9 +111,54 @@ CodeMirror.defineMode("hmrp", function ()
                 currentLine.match(AddRegex) ||
                 currentLine.match(SubRegex);
 
+            var isInstruction = 
+                isSimpleInstruction ||
+                isJumpInstruction ||
+                isRegisterArgumentInstruction;          
+
             if (isInstruction)
             {
-                return '';
+                if (isSimpleInstruction)
+                {
+                    return '';
+                }
+                else
+                {
+                    stream.backUp(nbEatToken);
+                    var halfLine = "";
+
+                    if (isJumpInstruction)
+                    {
+                        var isMatch = false
+                        while (!isMatch)
+                        {
+                            halfLine = halfLine + stream.next();
+                            var isMatch =
+                                halfLine.match(JumpZeroShortRegex) ||
+                                halfLine.match(JumpNonZeroShortRegex) ||
+                                halfLine.match(JumpShortRegex);
+                        }
+                        state.isConsumingJumpEndLine = true;
+                        return '';
+                    }
+                    else
+                    {
+                        var isMatch = false
+                        while (!isMatch)
+                        {
+                            halfLine = halfLine + stream.next();
+                            var isMatch =
+                                halfLine.match(CopyToShortRegex) ||
+                                halfLine.match(CopyFromShortRegex) ||
+                                halfLine.match(BumpUpShortRegex) ||
+                                halfLine.match(BumpDownShortRegex) ||
+                                halfLine.match(AddShortRegex) ||
+                                halfLine.match(SubShortRegex);
+                        }
+                        state.isConsumingRegisterInstructionEndLine = true;
+                        return '';
+                    }
+                }
             }
             return 'comment';
         }
