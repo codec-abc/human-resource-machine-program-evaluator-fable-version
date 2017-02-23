@@ -51,15 +51,19 @@ module RunUI =
       | ChangeBrowsedState obj ->
         let mutable newIndex : int = (Browser.window?parseInt (unbox(obj?target?value) : int)) :?> int
         newIndex <- newIndex - 1
-        let evalResult = Some <| {
-          model.EvaluationResult.Value with
-            CurrentlySelectedState = newIndex;
-        }
 
-        {
-          model with
-            EvaluationResult = evalResult;
-        }
+        if newIndex < 0 || newIndex >= model.EvaluationResult.Value.EvaluationStates.Length then
+          model
+        else
+          let evalResult = Some <| {
+            model.EvaluationResult.Value with
+              CurrentlySelectedState = newIndex;
+          }
+
+          {
+            model with
+              EvaluationResult = evalResult;
+          }
       | Run ->
         let lines = getLines()
         let parsedLines = HmrpEvaluator.stringListToProgramList lines
