@@ -72,7 +72,15 @@ module RunUI =
       ]
 
     Browser.window?hmrpEvaluatorWebWorker?postMessage(result) |> ignore
-    model
+    {
+      model with
+        EvaluationResult = 
+          {
+            CauseOfStop = None;
+            EvaluationStates = [];
+            CurrentlySelectedState = 0;
+          }
+    }
 
   let processRunAction model action =
     match action with

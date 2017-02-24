@@ -203,7 +203,6 @@ module ViewMain =
             Browser.window?evaluatorWorkerCallback <-
               (fun b -> 
                 let result = ofJson<InstructionEvaluationResult> b
-                Browser.window.console.log result
                 unbox (a(WorkerAction result))
               )
           )
