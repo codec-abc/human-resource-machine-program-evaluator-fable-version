@@ -39,6 +39,27 @@ module ViewMain =
       | RunAction action -> processRunAction model action
       | InputAction inputAction -> processInputAction model inputAction
       | RegisterAction registerAction -> processRegisterAction model registerAction
+      | WorkerAction instructionEvaluationResult -> 
+        (*
+        let (allStates, programStoppedReason) = run state
+        let outputs =
+            if allStates.Length > 0 then
+                let lastState = allStates |> List.rev|> List.head
+                lastState.Outputs
+            else
+                []
+
+        let evaluationResult = {
+            CauseOfStop = programStoppedReason;
+            EvaluationStates = allStates;
+            CurrentlySelectedState = allStates.Length - 1;
+        }
+        *)
+
+        //evaluationResult
+        Browser.window.console.log obj
+        Browser.window.alert "TODO"
+        model
 
   let view model =
     div
@@ -156,6 +177,7 @@ module ViewMain =
                               (fun w ->
                                 Browser.window?HasInit <- true
                                 Browser.window?myCodeMirror <- Browser.window?CodeMirror(node, codeConfig) |> ignore
+                                Browser.window
                               ),
                               0) |> ignore
                           else
@@ -170,6 +192,8 @@ module ViewMain =
     let initModel = createDefaultModel()
     createSimpleApp initModel view update Virtualdom.createRender
       |> withStartNodeSelector "#app"
+      |> withProducer (fun a -> 
+          Browser.window?evaluatorWorkerCallback <- (fun b -> unbox (a(WorkerAction b))))
       |> start
     
     let returnCode = 0 in returnCode

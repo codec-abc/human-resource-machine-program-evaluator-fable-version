@@ -508,21 +508,4 @@ module HmrpEvaluator =
         }
 
         let nextStepResult = runStep state
-        (*
-        let (allStates, programStoppedReason) = run state
-        let outputs =
-            if allStates.Length > 0 then
-                let lastState = allStates |> List.rev|> List.head
-                lastState.Outputs
-            else
-                []
-
-        let evaluationResult = {
-            CauseOfStop = programStoppedReason;
-            EvaluationStates = allStates;
-            CurrentlySelectedState = allStates.Length - 1;
-        }
-        *)
-
-        //evaluationResult
         nextStepResult

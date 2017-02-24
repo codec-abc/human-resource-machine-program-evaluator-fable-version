@@ -24,8 +24,7 @@
         window.hmrpEvaluatorWebWorker = new window.Worker(evaluator);
         window.hmrpEvaluatorWebWorker.onmessage = function(e) 
         {
-            console.log("new State");
-            console.log(e.data);
+            window.evaluatorWorkerCallback(e.data);
         }
     </script>
     </body>

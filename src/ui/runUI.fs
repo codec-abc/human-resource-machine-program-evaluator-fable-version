@@ -47,11 +47,11 @@ module RunUI =
     let mutable newIndex : int = (Browser.window?parseInt (unbox(obj?target?value) : int)) :?> int
     newIndex <- newIndex - 1
 
-    if newIndex < 0 || newIndex >= model.EvaluationResult.Value.EvaluationStates.Length || newIndex <> newIndex then
+    if newIndex < 0 || newIndex >= model.EvaluationResult.EvaluationStates.Length || newIndex <> newIndex then
       model
     else
-      let evalResult = Some <| {
-        model.EvaluationResult.Value with
+      let evalResult = {
+        model.EvaluationResult with
           CurrentlySelectedState = newIndex;
       }
 
@@ -64,14 +64,14 @@ module RunUI =
     let lines = getLines()
     let registers = buildRegisters model
     let inputs = buildInputs model
+    let result = 
+      createObj [
+        "lines" ==> toJson lines
+        "registers" ==> toJson registers
+        "inputs" ==> toJson inputs
+      ]
 
-    let result = createObj [
-      "lines" ==> toJson lines
-      "registers" ==> toJson registers
-      "inputs" ==> toJson inputs
-    ]
-
-    Browser.window?hmrpEvaluatorWebWorker?postMessage(result)
+    Browser.window?hmrpEvaluatorWebWorker?postMessage(result) |> ignore
     model
 
   let processRunAction model action =
@@ -80,75 +80,81 @@ module RunUI =
       | Run -> handleRun model
 
   let viewRun model =
-    match model.EvaluationResult with
-      | None -> div [] []
-      | Some evalResult ->
-          let selectedState = evalResult.EvaluationStates.[evalResult.CurrentlySelectedState]
-          let outputs = HmrpEvaluator.listToString selectedState.Outputs 
-          let inputs = HmrpEvaluator.listToString selectedState.Inputs
-          let humanValueAsStr =
-            match selectedState.HumanValue with
-            | None -> "None"
-            | Some x -> x.ToString()
-          
-          let myDiv =
+    if model.EvaluationResult.EvaluationStates.Length > 0 && model.EvaluationResult.CurrentlySelectedState < model.EvaluationResult.EvaluationStates.Length then
+      let selectedState = model.EvaluationResult.EvaluationStates.[model.EvaluationResult.CurrentlySelectedState]
+      let outputs = HmrpEvaluator.listToString selectedState.Outputs 
+      let inputs = HmrpEvaluator.listToString selectedState.Inputs
+
+      let humanValueAsStr = 
+        match selectedState.HumanValue with
+          | None -> "None"
+          | Some x -> x.ToString()
+      
+      let causeOfStopAsStr = 
+        match model.EvaluationResult.CauseOfStop with
+          | None -> "Not stopped yet."
+          | Some causeOfStop -> causeOfStop
+      
+      let myDiv =
+          [
+            h3
+              []
+              [text "Stop cause: "]
+            text causeOfStopAsStr
+            h3
+              []
+              [text "States"]
+            input
               [
-                h3
-                  []
-                  [text "Stop cause: "]
-                text evalResult.CauseOfStop
-                h3
-                  []
-                  [text "States"]
-                input
-                  [
-                    attribute "type" "range"
-                    attribute "min" "1"
-                    attribute "max" ((evalResult.EvaluationStates.Length).ToString())
-                    attribute "value" ((evalResult.CurrentlySelectedState + 1).ToString())
-                    onInput (fun a -> RunAction <| ChangeBrowsedState a)
-                    hook 
-                      "hook"
-                      (HookHelper.CreateHook (fun node propName ->
-                        node?max <- ((evalResult.EvaluationStates.Length).ToString())
-                        node?value <- ((evalResult.CurrentlySelectedState + 1).ToString())
-                        )
-                      )
-                  ]
-                br []
-                text <| "State "
-                input
-                  [
-                    attribute "type" "number"
-                    attribute "min" "1"
-                    attribute "max" ((evalResult.EvaluationStates.Length).ToString())
-                    attribute "value" <| (evalResult.CurrentlySelectedState + 1).ToString() 
-                    onChange (fun a -> RunAction <| ChangeBrowsedState a)
-                    hook 
-                      "hook2"
-                      (HookHelper.CreateHook (fun node propName ->
-                        node?max <- ((evalResult.EvaluationStates.Length).ToString())
-                        node?value <- ((evalResult.CurrentlySelectedState + 1).ToString())
-                        )
-                      )
-                  ]
-                text <| "/" + ((evalResult.EvaluationStates.Length).ToString())
-                h3
-                  []
-                  [text "Outputs: "]
-                text outputs
-                h3
-                  []
-                  [text "Inputs: "]
-                text inputs
-                h3
-                  []
-                  [text "Human Value: "]
-                text humanValueAsStr
-                h3
-                  []
-                  [text "Current Line: "]
-                text <| (selectedState.CurrentInstructionLine + 1).ToString()
-                // TODO : add Registers ?
+                attribute "type" "range"
+                attribute "min" "1"
+                attribute "max" ((model.EvaluationResult.EvaluationStates.Length).ToString())
+                attribute "value" ((model.EvaluationResult.CurrentlySelectedState + 1).ToString())
+                onInput (fun a -> RunAction <| ChangeBrowsedState a)
+                hook 
+                  "hook"
+                  (HookHelper.CreateHook (fun node propName ->
+                    node?max <- ((model.EvaluationResult.EvaluationStates.Length).ToString())
+                    node?value <- ((model.EvaluationResult.CurrentlySelectedState + 1).ToString())
+                    )
+                  )
               ]
-          div [] myDiv 
+            br []
+            text <| "State "
+            input
+              [
+                attribute "type" "number"
+                attribute "min" "1"
+                attribute "max" ((model.EvaluationResult.EvaluationStates.Length).ToString())
+                attribute "value" <| (model.EvaluationResult.CurrentlySelectedState + 1).ToString() 
+                onChange (fun a -> RunAction <| ChangeBrowsedState a)
+                hook 
+                  "hook2"
+                  (HookHelper.CreateHook (fun node propName ->
+                    node?max <- ((model.EvaluationResult.EvaluationStates.Length).ToString())
+                    node?value <- ((model.EvaluationResult.CurrentlySelectedState + 1).ToString())
+                    )
+                  )
+              ]
+            text <| "/" + ((model.EvaluationResult.EvaluationStates.Length).ToString())
+            h3
+              []
+              [text "Outputs: "]
+            text outputs
+            h3
+              []
+              [text "Inputs: "]
+            text inputs
+            h3
+              []
+              [text "Human Value: "]
+            text humanValueAsStr
+            h3
+              []
+              [text "Current Line: "]
+            text <| (selectedState.CurrentInstructionLine + 1).ToString()
+            // TODO : add Registers ?
+          ]
+      div [] myDiv
+    else
+      div [] []

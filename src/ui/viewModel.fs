@@ -3,6 +3,12 @@ namespace View
 open System.IO
 open Hmrp
 open Hmrp.HmrpEvaluator
+open Fable.Core 
+open Fable.Import
+open Fable.Core.JsInterop
+open Fable.Arch
+open Fable.Arch.App
+open Fable.Arch.Html
 
 module ViewModel =
 
@@ -18,7 +24,7 @@ module ViewModel =
   }
 
   type EvaluationResult = {
-    CauseOfStop : string;
+    CauseOfStop : string option;
     EvaluationStates : MachineState list;
     CurrentlySelectedState : int;
   }
@@ -45,17 +51,23 @@ module ViewModel =
   type Model = {
     Registers : Register list;
     Inputs : Input list;
-    EvaluationResult : EvaluationResult option;
+    EvaluationResult : EvaluationResult;
   }
 
   type Action =
     | InputAction of InputAction
     | RegisterAction of RegisterAction
     | RunAction of RunAction
+    | WorkerAction of InstructionEvaluationResult
 
   let createDefaultModel () =
     {
       Registers = [];
       Inputs = [];
-      EvaluationResult = None;
+      EvaluationResult = 
+        {
+          CauseOfStop = None;
+          EvaluationStates = [];
+          CurrentlySelectedState = 0;
+        };
     }
