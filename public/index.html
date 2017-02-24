@@ -24,7 +24,32 @@
         window.hmrpEvaluatorWebWorker = new window.Worker(evaluator);
         window.hmrpEvaluatorWebWorker.onmessage = function(e) 
         {
-            window.evaluatorWorkerCallback(e.data);
+            var msg = e.data;
+            if (msg.Case === "NewState")
+            {
+                var struct = msg.Fields[0];
+                var newInputs = [];
+                for(var i = 0; i < struct.Inputs.length; i++)
+                {
+                    newInputs.push(struct.Inputs[i]);
+                }
+                struct.Inputs = newInputs;
+
+                var newOutputs = [];
+                for(var i = 0; i < struct.Outputs.length; i++)
+                {
+                    newOutputs.push(struct.Outputs[i]);
+                }
+                struct.Outputs = newOutputs;
+
+                var newRegisters = [];
+                for(var i = 0; i < struct.Registers.length; i++)
+                {
+                    newRegisters.push(struct.Registers[i]);
+                }
+                struct.Registers = newRegisters;
+            }
+            window.evaluatorWorkerCallback(JSON.stringify(msg));
         }
     </script>
     </body>

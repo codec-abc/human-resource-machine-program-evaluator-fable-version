@@ -424,25 +424,6 @@ module HmrpEvaluator =
             result
         else
             End "There is no more line to run."
-    (*
-    let run initialMachineState =
-        let mutable keepRunning = true
-        let mutable allStates = []
-        let mutable currentState = initialMachineState
-        let mutable programStoppedReason = ""
-        while keepRunning do
-            let nextStepResult = runStep currentState
-            match nextStepResult with
-                | End errorMsg -> 
-                    //printfn "%s\n" errorMsg
-                    programStoppedReason <- errorMsg
-                    keepRunning <- false
-                | NewState state ->
-                    //printfn "%s\n" <| state.ToString()
-                    allStates <- List.append allStates [state]
-                    currentState <- state
-        (allStates, programStoppedReason)
-    *)
 
     let printState state =
         let stateToString = state.ToString()

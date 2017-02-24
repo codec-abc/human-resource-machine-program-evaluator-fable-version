@@ -26,7 +26,7 @@ onmessage = function(e)
     else
     {
         var initialState = Evaluator.runFirstStep(e.data);
-        postMessage(JSON.stringify(initialState));
+        postMessage(initialState);
         computations[uuid] = {
             shouldContinue : initialState.Case === NEW_STATE_CASE,
             state : initialState
@@ -38,7 +38,7 @@ onmessage = function(e)
                 setTimeout(function ()  
                 {
                     var newState = Evaluator.runStep(computations[uuid].state.Fields[0]);
-                    postMessage(JSON.stringify(newState));
+                    postMessage(newState);
                     computations[uuid].shouldContinue = newState.Case === NEW_STATE_CASE;
                     computations[uuid].state = newState;
                     if (computations[uuid].shouldContinue)
