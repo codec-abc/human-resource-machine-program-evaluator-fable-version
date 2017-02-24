@@ -68,7 +68,7 @@ CodeMirror.defineMode("hmrp", function ()
                     stream.next();
                 }
                 state.isConsumingJumpEndLine = false;
-                return "keyword";
+                return "property";
             }
 
             if (state.isConsumingRegisterInstructionEndLine)
