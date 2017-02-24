@@ -1,7 +1,21 @@
 import * as Evaluator from "./hmrpEvaluator";
 
-onmessage = function(e) {
+function guid() 
+{
+    function s4() 
+    {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
 
+var computations = {};
+
+onmessage = function(e) 
+{
+    var uuid = guid();
     var NEW_STATE_CASE = "NewState";
     var END_CASE =  "End";
 
@@ -11,17 +25,31 @@ onmessage = function(e) {
     }
     else
     {
-        var result = Evaluator.runFirstStep(e.data);
+        var initialState = Evaluator.runFirstStep(e.data);
+        postMessage(initialState);
 
-        postMessage(result);
+        computations[uuid] = {
+            shouldContinue : initialState.Case == NEW_STATE_CASE,
+            state : initialState
+        };
 
-        var shouldContinue = result.Case == NEW_STATE_CASE;
-        while (shouldContinue)
-        {
-            result = Evaluator.runStep(result.Fields[0]);
-            shouldContinue = result.Case == NEW_STATE_CASE;
-            postMessage(result);
+        var runRecursively = function() {
+            if (computations[uuid].shouldContinue === true)
+            {
+                setTimeout(function ()  
+                {
+                    var newState = Evaluator.runStep(computations[uuid].state.Fields[0]);
+                    postMessage(newState);
+                    computations[uuid].shouldContinue = newState.Case == NEW_STATE_CASE;
+                    computations[uuid].state = newState;
+                    if (computations[uuid].shouldContinue)
+                    {
+                        runRecursively();
+                    }
+                }, 0);
+            }
         }
 
+        runRecursively();
     }
 }
