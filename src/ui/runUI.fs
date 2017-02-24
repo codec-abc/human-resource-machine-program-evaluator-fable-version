@@ -12,7 +12,7 @@ open ViewModel
 
 module RunUI =
 
-  let getLines () =
+  let private getLines () =
     let mutable lines = []
     let w = Browser.window?myCodeMirror?doc
     w?eachLine (fun l ->
@@ -20,7 +20,7 @@ module RunUI =
       lines <- List.append lines [lineText.ToString()]) |> ignore
     lines
 
-  let buildRegisters model = 
+  let private buildRegisters model = 
     let mutable result = []
     for register in model.Registers do
       let modelRegister : HmrpEvaluator.Register = 
@@ -37,62 +37,65 @@ module RunUI =
       result <- List.append result [modelRegister]
     result
   
-  let buildInputs model =
+  let private buildInputs model =
     let mutable result = []
     for inputUIModel in model.Inputs do
       result <- List.append result [inputUIModel.Value]
     result
-    
+
+  let private handleChangeBrowsedState obj model =
+    let mutable newIndex : int = (Browser.window?parseInt (unbox(obj?target?value) : int)) :?> int
+    newIndex <- newIndex - 1
+
+    if newIndex < 0 || newIndex >= model.EvaluationResult.Value.EvaluationStates.Length || newIndex <> newIndex then
+      model
+    else
+      let evalResult = Some <| {
+        model.EvaluationResult.Value with
+          CurrentlySelectedState = newIndex;
+      }
+
+      {
+        model with
+          EvaluationResult = evalResult;
+      }
+  
+  let private handleRun model =
+    let lines = getLines()
+    let parsedLines = HmrpEvaluator.stringListToProgramList lines
+    let programInitialState = HmrpEvaluator.defaultMachineState
+    let registers = buildRegisters model
+    let inputs = buildInputs model
+
+    let state = {
+      programInitialState with
+        Inputs = inputs;
+        Registers = registers;
+        ProgramLines = parsedLines;
+    }
+    let (allStates, programStoppedReason) = HmrpEvaluator.run state
+    let outputs =
+      if allStates.Length > 0 then
+        let lastState = allStates |> List.rev|> List.head
+        lastState.Outputs
+      else
+        []
+
+    let evaluationResult = {
+      CauseOfStop = programStoppedReason;
+      EvaluationStates = allStates;
+      CurrentlySelectedState = allStates.Length - 1;
+    }
+
+    {
+      model with
+        EvaluationResult = Some evaluationResult;
+    }
+
   let processRunAction model action =
     match action with
-      | ChangeBrowsedState obj ->
-        let mutable newIndex : int = (Browser.window?parseInt (unbox(obj?target?value) : int)) :?> int
-        newIndex <- newIndex - 1
-
-
-        if newIndex < 0 || newIndex >= model.EvaluationResult.Value.EvaluationStates.Length || newIndex <> newIndex then
-          model
-        else
-          let evalResult = Some <| {
-            model.EvaluationResult.Value with
-              CurrentlySelectedState = newIndex;
-          }
-
-          {
-            model with
-              EvaluationResult = evalResult;
-          }
-      | Run ->
-        let lines = getLines()
-        let parsedLines = HmrpEvaluator.stringListToProgramList lines
-        let programInitialState = HmrpEvaluator.defaultMachineState
-        let registers = buildRegisters model
-        let inputs = buildInputs model
-
-        let state = {
-          programInitialState with
-            Inputs = inputs;
-            Registers = registers;
-            ProgramLines = parsedLines;
-        }
-        let (allStates, programStoppedReason) = HmrpEvaluator.run state
-        let outputs =
-          if allStates.Length > 0 then
-            let lastState = allStates |> List.rev|> List.head
-            lastState.Outputs
-          else
-            []
-    
-        let evaluationResult = {
-          CauseOfStop = programStoppedReason;
-          EvaluationStates = allStates;
-          CurrentlySelectedState = allStates.Length - 1;
-        }
-
-        {
-          model with
-            EvaluationResult = Some evaluationResult;
-        }
+      | ChangeBrowsedState obj -> handleChangeBrowsedState obj model
+      | Run -> handleRun model
 
   let viewRun model =
     match model.EvaluationResult with
