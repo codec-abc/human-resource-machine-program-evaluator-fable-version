@@ -2,15 +2,12 @@ namespace View
 
 open System.IO
 open Hmrp
-
 open Fable.Core 
 open Fable.Import
 open Fable.Core.JsInterop
-
 open Fable.Arch
 open Fable.Arch.App
 open Fable.Arch.Html
-
 open ViewModel
 
 module RunUI =

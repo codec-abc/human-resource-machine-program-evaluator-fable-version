@@ -1,15 +1,12 @@
 namespace View
 
 open System.IO
-
 open Fable.Core 
 open Fable.Import
 open Fable.Core.JsInterop
-
 open Fable.Arch
 open Fable.Arch.App
 open Fable.Arch.Html
-
 open ViewModel
 
 module RegisterUI =
@@ -30,13 +27,14 @@ module RegisterUI =
             )
           )
       ]
+
     let moreAttributes = 
       if register.Enabled then
         []
       else
         [attribute "disabled" "true"]
-    List.append basicAttributes moreAttributes
 
+    List.append basicAttributes moreAttributes
 
   let private getInputStateAttributes (register : Register) =
     let callback = onChange (fun a -> RegisterAction <| UpdateRegisterState (register.UIIndex, a))
@@ -131,126 +129,115 @@ module RegisterUI =
   let private sortRegisters (registers : Register list) = 
     List.sortWith (fun (a : Register) (b : Register) -> a.UIIndex - b.UIIndex) registers
 
-  let viewRegisters model =
-    List.map (fun a -> viewSingleRegister a model.Registers.Length) model.Registers
+  let private moveElements elemToMoveDown elemToMoveUp otherRegisters model =
+    let first = {
+      elemToMoveDown with
+        Register.UIIndex = elemToMoveDown.UIIndex + 1;
+    }
+
+    let second = {
+      elemToMoveUp with
+        Register.UIIndex = elemToMoveUp.UIIndex - 1;
+    }
+
+    let newRegisters = 
+      otherRegisters
+        |> List.append [first]
+        |> List.append [second]
+        |> sortRegisters
+
+    {
+      model with
+        Registers = newRegisters
+    }
+  
+  let private handleMoveRegisterValueDown index model =
+    let (elemToMoveDown, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
+    let (elemToMoveUp, listExcept2) = extractRegisterFromList otherRegisters model.Registers.[index + 1]
+    moveElements elemToMoveDown elemToMoveUp listExcept2 model
+
+  let private handleMoveRegisterValueUp index model =
+    let (elemToMoveUp, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
+    let (elemToMoveDown, listExcept2) = extractRegisterFromList otherRegisters model.Registers.[index - 1]
+    moveElements elemToMoveDown elemToMoveUp listExcept2 model
+
+  let private handleCreateRegister model =
+    let newUIIndex = 
+      if model.Registers.Length > 0 then
+        model.Registers 
+        |> List.map (fun a -> a.UIIndex) 
+        |> List.max
+        |> (fun x -> x + 1)
+      else
+        0
+
+    let newRegister = {
+      Value = 0;
+      Enabled = false;
+      UIIndex = newUIIndex;
+    }
+
+    { 
+      model with
+        Registers = List.append model.Registers [newRegister]
+    }
+
+  let private handleUpdateRegisterState index obj model =
+    let isChecked : bool = (obj?target?checked).ToString() = "true"
+    let (myElem, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
+
+    let newElem = {
+      myElem with
+        Enabled = isChecked;
+    }
+    
+    let newRegisters =  List.append otherRegisters [newElem] |> sortRegisters
+
+    {
+      model with
+        Registers = newRegisters
+    }
+
+  let private handleUpdateRegisterValue index obj model =
+    let strValue =  (obj?target?value).ToString()
+    if strValue = "" then
+      model
+    else
+      let (myElem, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
+      
+      let newElem = {
+        myElem with
+          Value = int strValue;
+      }
+
+      let newRegisters = 
+        List.append otherRegisters [newElem]
+        |> sortRegisters
+
+      {
+        model with
+          Registers = newRegisters
+      }
+
+  let private handleRemoveRegisterValue index model =
+    let (myElem, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
+    let updatedList = 
+      otherRegisters 
+      |> List.map (fun e -> if e.UIIndex <= index then e else { e with UIIndex = e.UIIndex - 1} )
+    {
+      model with
+        Registers = updatedList
+    }
 
   let processRegisterAction (model : View.ViewModel.Model) action = 
     match action with
-      | MoveRegisterValueDown index ->
-        let (elemToMoveDown, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
-        let (elemToMoveUp, listExcept2) = extractRegisterFromList otherRegisters model.Registers.[index + 1]
+      | MoveRegisterValueDown index -> handleMoveRegisterValueDown index model
+      | MoveRegisterValueUp index -> handleMoveRegisterValueUp index model
+      | CreateRegister -> handleCreateRegister model
+      | UpdateRegisterState (index, obj) -> handleUpdateRegisterState index obj model
+      | UpdateRegisterValue (index, obj) -> handleUpdateRegisterValue index obj model
+      | RemoveRegisterValue index -> handleRemoveRegisterValue index model
 
-        let first = {
-          elemToMoveDown with
-            Register.UIIndex = elemToMoveDown.UIIndex + 1;
-        }
-
-        let second = {
-          elemToMoveUp with
-            Register.UIIndex = elemToMoveUp.UIIndex - 1;
-        }
-
-        let newRegisters = 
-          listExcept2
-            |> List.append [first]
-            |> List.append [second]
-            |> sortRegisters
-
-        {
-          model with
-            Registers = newRegisters
-        }
-
-      | MoveRegisterValueUp index ->
-        let (elemToMoveUp, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
-        let (elemToMoveDown, listExcept2) = extractRegisterFromList otherRegisters model.Registers.[index - 1]
-
-        let first = {
-          elemToMoveDown with
-            Register.UIIndex = elemToMoveDown.UIIndex + 1;
-        }
-
-        let second = {
-          elemToMoveUp with
-            Register.UIIndex = elemToMoveUp.UIIndex - 1;
-        }
-
-        let newRegisters = 
-          listExcept2
-            |> List.append [first]
-            |> List.append [second]
-            |> sortRegisters
-
-        {
-          model with
-            Registers = newRegisters
-        }
-
-      | CreateRegister -> 
-          let newUIIndex = 
-            if model.Registers.Length > 0 then
-              model.Registers 
-              |> List.map (fun a -> a.UIIndex) 
-              |> List.max
-              |> (fun x -> x + 1)
-            else
-              0
-          let newRegister = {
-            Value = 0;
-            Enabled = false;
-            UIIndex = newUIIndex;
-          }
-          { 
-            model with
-              Registers = List.append model.Registers [newRegister]
-          }
-
-      | UpdateRegisterState (index, obj) ->
-          let isChecked : bool = (obj?target?checked).ToString() = "true"
-
-          let (myElem, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
-
-          let newElem = {
-            myElem with
-              Enabled = isChecked;
-          }
-          
-          let newRegisters = 
-            List.append otherRegisters [newElem]
-            |> sortRegisters
-
-          {
-            model with
-              Registers = newRegisters
-          }
-
-      | UpdateRegisterValue(index, obj) ->
-        let strValue =  (obj?target?value).ToString()
-        if strValue = "" then
-          model
-        else
-          let (myElem, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
-          
-          let newElem = {
-            myElem with
-              Value = int strValue;
-          }
-
-          let newRegisters = 
-            List.append otherRegisters [newElem]
-            |> sortRegisters
-
-          {
-            model with
-              Registers = newRegisters
-          }
-
-      | RemoveRegisterValue index ->
-        let (myElem, otherRegisters) = extractRegisterFromList model.Registers model.Registers.[index]
-        let updatedList = 
-          otherRegisters 
-          |> List.map (fun e -> if e.UIIndex <= index then e else { e with UIIndex = e.UIIndex - 1} )
-        {
-          model with
-            Registers = updatedList
-        }
+  let viewRegisters model =
+    List.map (fun a -> viewSingleRegister a model.Registers.Length) model.Registers
+        
