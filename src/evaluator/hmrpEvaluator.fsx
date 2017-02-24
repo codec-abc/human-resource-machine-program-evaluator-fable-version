@@ -94,17 +94,17 @@ module HmrpEvaluator =
 
     type MachineState = 
         {
-            Inputs : int list;
-            Outputs : int list;
-            Registers : Register list;
+            Inputs : int array;
+            Outputs : int array;
+            Registers : Register array;
             HumanValue : int option;
-            ProgramLines : ProgramLine list;
+            ProgramLines : ProgramLine array;
             CurrentInstructionLine : int;
         }
         override x.ToString() =
-            let inputsAsString = listToString x.Inputs
-            let outputsAsString = listToString x.Outputs
-            let registersAsStringList = List.map (fun r -> sprintf "\n        {Index : %i, Value : %s}" r.Index (maybeToString r.RegisterValue)) x.Registers
+            let inputsAsString = listToString <| List.ofArray x.Inputs
+            let outputsAsString = listToString <| List.ofArray x.Outputs
+            let registersAsStringList = List.map (fun r -> sprintf "\n        {Index : %i, Value : %s}" r.Index (maybeToString r.RegisterValue)) (List.ofArray x.Registers)
             let registersAsString = listToString registersAsStringList
             let humanValueAsString = 
                 match x.HumanValue with
@@ -121,7 +121,7 @@ module HmrpEvaluator =
 
     type InstructionEvaluationResult =
         | End of string
-        | NewState of  MachineState
+        | NewState of MachineState
 
     let private toInstruction (instructionName : string) (argument : string option) (lineNumber : int) =
         let instructionUpperCase = instructionName.ToUpper()
@@ -204,13 +204,13 @@ module HmrpEvaluator =
     let private runInboxInstruction machineState =
         if machineState.Inputs.Length > 0 then
             let firstElemOfInput = machineState.Inputs.[0]
-            let restOfInput = List.tail machineState.Inputs
+            let restOfInput = List.tail <| List.ofArray machineState.Inputs
             let result = 
                 {
                     machineState with 
                         CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
                         HumanValue = Some firstElemOfInput;
-                        Inputs = restOfInput;
+                        Inputs = List.toArray restOfInput;
                 }
                 in ResultF.OkF result
         else
@@ -220,13 +220,13 @@ module HmrpEvaluator =
     let private runOutBoxInstruction machineState =
         match machineState.HumanValue with
             | Some humanValue -> 
-                let newOutputs = List.append machineState.Outputs [humanValue]
+                let newOutputs = List.append (List.ofArray machineState.Outputs) [humanValue]
                 let result = 
                     {
                         machineState with
                             CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
                             HumanValue = None;
-                            Outputs = newOutputs
+                            Outputs = List.toArray newOutputs
                     }
                     in ResultF.OkF result
             | None -> ResultF.ErrorF "Cannot set output since there is no value in the human register."
@@ -237,7 +237,7 @@ module HmrpEvaluator =
                 let shouldJump = humanValue < 0;
                 let nextLineIndexOrError = 
                     if shouldJump then
-                        getLineIndexByLabelName machineState.ProgramLines labelToJumpTo
+                        getLineIndexByLabelName (List.ofArray machineState.ProgramLines) labelToJumpTo
                     else
                         ResultF.OkF <| machineState.CurrentInstructionLine + 1
                 let f = 
@@ -255,7 +255,7 @@ module HmrpEvaluator =
             let shouldJump = humanValue = 0;
             let nextLineIndexOrError = 
                 if shouldJump then
-                    getLineIndexByLabelName machineState.ProgramLines labelToJumpTo
+                    getLineIndexByLabelName (List.ofArray machineState.ProgramLines) labelToJumpTo
                 else
                     ResultF.OkF <| machineState.CurrentInstructionLine + 1
             let f =
@@ -268,7 +268,7 @@ module HmrpEvaluator =
         | None -> ResultF.ErrorF "Cannot test to jump since there is no value in the human register."
 
     let private runJumpInstruction machineState labelToJumpTo =
-        let nextLineIndexOrError = getLineIndexByLabelName machineState.ProgramLines labelToJumpTo
+        let nextLineIndexOrError = getLineIndexByLabelName (List.ofArray machineState.ProgramLines) labelToJumpTo
         let f =
             fun nextLineIndex ->
                 ResultF.OkF {
@@ -278,7 +278,7 @@ module HmrpEvaluator =
         ResultFbind f nextLineIndexOrError
 
     let private runCopyToInstruction machineState registerIndex =
-        let oldRegisterOrError = getRegisterByIndex machineState.Registers registerIndex
+        let oldRegisterOrError = getRegisterByIndex (List.ofArray machineState.Registers) registerIndex
         let f = 
             fun oldRegister ->
                 match machineState.HumanValue with
@@ -289,18 +289,18 @@ module HmrpEvaluator =
                                 RegisterValue = Some humanValue
                         }
                     
-                    let allRegisterExceptOne = List.filter (fun register -> register <> oldRegister) machineState.Registers
+                    let allRegisterExceptOne = List.filter (fun register -> register <> oldRegister) (List.ofArray machineState.Registers)
                     let allRegistersUpdate = List.append allRegisterExceptOne [newRegister]
                     ResultF.OkF {
                         machineState with 
                             CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
-                            Registers = allRegistersUpdate
+                            Registers = List.toArray allRegistersUpdate
                     }
                 | None -> ResultF.ErrorF <| sprintf "Cannot copy to register %i because there is no value in the human register." oldRegister.Index
         ResultFbind f oldRegisterOrError
 
     let private runCopyFromInstruction machineState registerIndex =
-        let registerOrError = getRegisterByIndex machineState.Registers registerIndex
+        let registerOrError = getRegisterByIndex (List.ofArray machineState.Registers) registerIndex
         let f =
             fun register ->
                 match register.RegisterValue with
@@ -314,7 +314,7 @@ module HmrpEvaluator =
         ResultFbind f registerOrError
 
     let private runAddInstruction machineState registerIndex =
-        let registerOrError = getRegisterByIndex machineState.Registers registerIndex
+        let registerOrError = getRegisterByIndex (List.ofArray machineState.Registers) registerIndex
         let f = 
             fun register ->
                 match register.RegisterValue with
@@ -331,7 +331,7 @@ module HmrpEvaluator =
         ResultFbind f registerOrError
 
     let private runSubtractInstruction machineState registerIndex =
-        let registerOrError = getRegisterByIndex machineState.Registers registerIndex
+        let registerOrError = getRegisterByIndex (List.ofArray machineState.Registers) registerIndex
         let f = 
             fun register ->
                 match register.RegisterValue with
@@ -348,7 +348,7 @@ module HmrpEvaluator =
         ResultFbind f registerOrError
 
     let private runIncrementInstruction machineState registerIndex =
-        let oldRegisterOrError = getRegisterByIndex machineState.Registers registerIndex
+        let oldRegisterOrError = getRegisterByIndex (List.ofArray machineState.Registers) registerIndex
         let f = 
             fun oldRegister ->
                 match oldRegister.RegisterValue with
@@ -359,19 +359,19 @@ module HmrpEvaluator =
                                 oldRegister with
                                     RegisterValue = Some newValue
                             }
-                        let allRegisterExceptOne = List.filter (fun register -> register <> oldRegister) machineState.Registers
+                        let allRegisterExceptOne = List.filter (fun register -> register <> oldRegister) (List.ofArray machineState.Registers)
                         let allRegistersUpdate = List.append allRegisterExceptOne [newRegister]
                         ResultF.OkF {
                             machineState with 
                                 CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
-                                Registers = allRegistersUpdate
+                                Registers = List.toArray allRegistersUpdate
                                 HumanValue = Some newValue
                         }               
                     | None -> ResultF.ErrorF <| sprintf "Cannot increment from register %i because register has no value." oldRegister.Index
         ResultFbind f oldRegisterOrError
 
     let private runDecrementInstruction machineState registerIndex =
-        let oldRegisterOrError = getRegisterByIndex machineState.Registers registerIndex
+        let oldRegisterOrError = getRegisterByIndex (List.ofArray machineState.Registers) registerIndex
         let f = 
             fun oldRegister ->
                 match oldRegister.RegisterValue with
@@ -382,12 +382,12 @@ module HmrpEvaluator =
                                 oldRegister with
                                     RegisterValue = Some newValue
                             }
-                        let allRegisterExceptOne = List.filter (fun register -> register <> oldRegister) machineState.Registers
+                        let allRegisterExceptOne = List.filter (fun register -> register <> oldRegister) (List.ofArray machineState.Registers)
                         let allRegistersUpdate = List.append allRegisterExceptOne [newRegister]
                         ResultF.OkF  {
                             machineState with 
                                 CurrentInstructionLine = machineState.CurrentInstructionLine + 1;
-                                Registers = allRegistersUpdate
+                                Registers = List.toArray allRegistersUpdate
                                 HumanValue = Some newValue
                         }
                     | None -> ResultF.ErrorF <| sprintf "Cannot increment from register %i because register has no value." oldRegister.Index
@@ -416,13 +416,15 @@ module HmrpEvaluator =
         let currentLineNumber = machineState.CurrentInstructionLine;
         if currentLineNumber < machineState.ProgramLines.Length then
             let currentInstruction = machineState.ProgramLines.[currentLineNumber];
-            match currentInstruction with
-                | MeaningLessLine -> NewState <| skipLine machineState
-                | LabelLine label -> NewState <| skipLine machineState
-                | InstructionLine instruction -> runInstruction machineState instruction
+            let result = 
+                match currentInstruction with
+                    | MeaningLessLine -> NewState <| skipLine machineState
+                    | LabelLine label -> NewState <| skipLine machineState
+                    | InstructionLine instruction -> runInstruction machineState instruction
+            result
         else
             End "There is no more line to run."
-
+    (*
     let run initialMachineState =
         let mutable keepRunning = true
         let mutable allStates = []
@@ -440,6 +442,7 @@ module HmrpEvaluator =
                     allStates <- List.append allStates [state]
                     currentState <- state
         (allStates, programStoppedReason)
+    *)
 
     let printState state =
         let stateToString = state.ToString()
@@ -467,11 +470,11 @@ module HmrpEvaluator =
 
     let defaultMachineState = 
         {
-            Inputs = [];
-            Outputs =[];
-            Registers = [];
+            Inputs = [||];
+            Outputs =[||];
+            Registers = [||];
             HumanValue = None;
-            ProgramLines = [];
+            ProgramLines = [||];
             CurrentInstructionLine = 0;
         }
 
@@ -493,18 +496,18 @@ module HmrpEvaluator =
             i <- i + 1
     
     let runFirstStep (input : obj) =
-        let lines = ofJson<string list> <| unbox (input?lines)
-        let registers = ofJson<Register list> <| unbox (input?registers)
-        let inputs = ofJson<int list> <| unbox (input?inputs)
+        let lines = ofJson<string array> <| unbox (input?lines)
+        let registers = ofJson<Register array> <| unbox (input?registers)
+        let inputs = ofJson<int array> <| unbox (input?inputs)
 
-        let parsedLines = stringListToProgramList lines
+        let parsedLines = stringListToProgramList (Array.toList lines)
         let programInitialState = defaultMachineState
 
         let state = {
             programInitialState with
                 Inputs = inputs;
                 Registers = registers;
-                ProgramLines = parsedLines;
+                ProgramLines = List.toArray parsedLines;
         }
 
         let nextStepResult = runStep state

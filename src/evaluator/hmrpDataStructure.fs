@@ -73,17 +73,18 @@ module HmrpEvaluator =
 
     type MachineState = 
         {
-            Inputs : int list;
-            Outputs : int list;
-            Registers : Register list;
+            Inputs : int array;
+            Outputs : int array;
+            Registers : Register array;
             HumanValue : int option;
-            ProgramLines : ProgramLine list;
+            ProgramLines : ProgramLine array;
             CurrentInstructionLine : int;
         }
+        (*
         override x.ToString() =
-            let inputsAsString = listToString x.Inputs
-            let outputsAsString = listToString x.Outputs
-            let registersAsStringList = List.map (fun r -> sprintf "\n        {Index : %i, Value : %s}" r.Index (maybeToString r.RegisterValue)) x.Registers
+            let inputsAsString = listToString (List.ofArray x.Inputs)
+            let outputsAsString = listToString (List.ofArray x.Outputs)
+            let registersAsStringList = List.map (fun r -> sprintf "\n        {Index : %i, Value : %s}" r.Index (maybeToString r.RegisterValue)) (List.ofArray x.Registers)
             let registersAsString = listToString registersAsStringList
             let humanValueAsString = 
                 match x.HumanValue with
@@ -97,6 +98,7 @@ module HmrpEvaluator =
                 "    Human Value: " + humanValueAsString + "\n" + 
                 "    Current Line: " + x.CurrentInstructionLine.ToString()
             result
+            *)
 
     type InstructionEvaluationResult =
         | End of string

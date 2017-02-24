@@ -11,6 +11,8 @@ open View.ViewModel
 open View.RegisterUI
 open View.InputUI
 open View.RunUI
+open Hmrp
+open Hmrp.HmrpEvaluator
 
 module ViewMain =
 
@@ -39,27 +41,31 @@ module ViewMain =
       | RunAction action -> processRunAction model action
       | InputAction inputAction -> processInputAction model inputAction
       | RegisterAction registerAction -> processRegisterAction model registerAction
-      | WorkerAction instructionEvaluationResult -> 
-        (*
-        let (allStates, programStoppedReason) = run state
-        let outputs =
-            if allStates.Length > 0 then
-                let lastState = allStates |> List.rev|> List.head
-                lastState.Outputs
-            else
-                []
+      | WorkerAction (instructionEvaluationResult : InstructionEvaluationResult) -> 
+        let newModel = 
+          match instructionEvaluationResult with
+            | End str ->
+              let evaluationResult = {
+                model.EvaluationResult with
+                  CauseOfStop = Some str;
+              }
 
-        let evaluationResult = {
-            CauseOfStop = programStoppedReason;
-            EvaluationStates = allStates;
-            CurrentlySelectedState = allStates.Length - 1;
-        }
-        *)
+              {
+                model with
+                  EvaluationResult = evaluationResult;
+              }
+            | NewState newState ->
+              let evaluationResult = {
+                model.EvaluationResult with
+                  EvaluationStates = List.append model.EvaluationResult.EvaluationStates [newState];
+                  CurrentlySelectedState = model.EvaluationResult.EvaluationStates.Length;
+              }
 
-        //evaluationResult
-        Browser.window.console.log obj
-        Browser.window.alert "TODO"
-        model
+              {
+                model with
+                  EvaluationResult = evaluationResult;
+              }
+        newModel
 
   let view model =
     div
@@ -192,8 +198,15 @@ module ViewMain =
     let initModel = createDefaultModel()
     createSimpleApp initModel view update Virtualdom.createRender
       |> withStartNodeSelector "#app"
-      |> withProducer (fun a -> 
-          Browser.window?evaluatorWorkerCallback <- (fun b -> unbox (a(WorkerAction b))))
+      |> withProducer 
+          (fun a -> 
+            Browser.window?evaluatorWorkerCallback <-
+              (fun b -> 
+                let result = ofJson<InstructionEvaluationResult> b
+                Browser.window.console.log result
+                unbox (a(WorkerAction result))
+              )
+          )
       |> start
     
     let returnCode = 0 in returnCode

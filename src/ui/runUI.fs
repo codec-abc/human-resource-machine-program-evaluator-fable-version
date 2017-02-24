@@ -82,8 +82,8 @@ module RunUI =
   let viewRun model =
     if model.EvaluationResult.EvaluationStates.Length > 0 && model.EvaluationResult.CurrentlySelectedState < model.EvaluationResult.EvaluationStates.Length then
       let selectedState = model.EvaluationResult.EvaluationStates.[model.EvaluationResult.CurrentlySelectedState]
-      let outputs = HmrpEvaluator.listToString selectedState.Outputs 
-      let inputs = HmrpEvaluator.listToString selectedState.Inputs
+      let outputs = HmrpEvaluator.listToString (List.ofArray selectedState.Outputs)
+      let inputs = HmrpEvaluator.listToString (List.ofArray selectedState.Inputs)
 
       let humanValueAsStr = 
         match selectedState.HumanValue with
