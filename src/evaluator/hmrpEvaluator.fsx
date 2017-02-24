@@ -1,11 +1,28 @@
 ﻿namespace Hmrp
 
+#r "../../node_modules/fable-core/Fable.Core.dll"
+
 open System
 open System.Text.RegularExpressions
 open System.Collections.Generic
-open ResultF
+open Fable.Core 
+open Fable.Import
+open Fable.Core.JsInterop
 
 module HmrpEvaluator =
+
+    type ResultF<'a,'b> =
+        | OkF of 'a
+        | ErrorF of 'b
+        
+    let ResultFbind f (result : ResultF<'a,'b>) =
+        match result with
+            | OkF a -> 
+                let application = f(a)
+                match application with
+                    | OkF c -> OkF c
+                    | ErrorF d -> ErrorF d
+            | ErrorF b -> ErrorF b
 
     let LabelRegex = new Regex @"^(\w+):$"
     let InstructionRegex = new Regex @"^(\s+)(\w+)(\s*)(\w*)$"
@@ -229,7 +246,7 @@ module HmrpEvaluator =
                             machineState with
                                 CurrentInstructionLine = nextLineIndex;
                         }
-                ResultF.bind f nextLineIndexOrError
+                ResultFbind f nextLineIndexOrError
             | None -> ResultF.ErrorF "Cannot test to jump since there is no value in the human register."
 
     let private runJumpIfZeroInstruction machineState labelToJumpTo =
@@ -247,7 +264,7 @@ module HmrpEvaluator =
                         machineState with
                             CurrentInstructionLine = nextLineIndex;
                     } 
-            ResultF.bind f nextLineIndexOrError
+            ResultFbind f nextLineIndexOrError
         | None -> ResultF.ErrorF "Cannot test to jump since there is no value in the human register."
 
     let private runJumpInstruction machineState labelToJumpTo =
@@ -258,7 +275,7 @@ module HmrpEvaluator =
                     machineState with
                         CurrentInstructionLine = nextLineIndex;
                 }
-        ResultF.bind f nextLineIndexOrError
+        ResultFbind f nextLineIndexOrError
 
     let private runCopyToInstruction machineState registerIndex =
         let oldRegisterOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -280,7 +297,7 @@ module HmrpEvaluator =
                             Registers = allRegistersUpdate
                     }
                 | None -> ResultF.ErrorF <| sprintf "Cannot copy to register %i because there is no value in the human register." oldRegister.Index
-        ResultF.bind f oldRegisterOrError
+        ResultFbind f oldRegisterOrError
 
     let private runCopyFromInstruction machineState registerIndex =
         let registerOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -294,7 +311,7 @@ module HmrpEvaluator =
                                 HumanValue = Some registerValue
                         }
                     | None -> ResultF.ErrorF <| sprintf "Cannot copy from register %i because register has no value." register.Index
-        ResultF.bind f registerOrError
+        ResultFbind f registerOrError
 
     let private runAddInstruction machineState registerIndex =
         let registerOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -311,7 +328,7 @@ module HmrpEvaluator =
                                 }
                             | None -> ResultF.ErrorF "Cannot add with register %i because there is no value in the human register"
                     | None -> ResultF.ErrorF <| sprintf "Cannot add with register %i because register has no value." register.Index
-        ResultF.bind f registerOrError
+        ResultFbind f registerOrError
 
     let private runSubtractInstruction machineState registerIndex =
         let registerOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -328,7 +345,7 @@ module HmrpEvaluator =
                                 }
                             | None -> ResultF.ErrorF "Cannot add with register %i because there is no value in the human register"
                     | None -> ResultF.ErrorF <| sprintf "Cannot subtract from register %i because register has no value." register.Index
-        ResultF.bind f registerOrError
+        ResultFbind f registerOrError
 
     let private runIncrementInstruction machineState registerIndex =
         let oldRegisterOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -351,7 +368,7 @@ module HmrpEvaluator =
                                 HumanValue = Some newValue
                         }               
                     | None -> ResultF.ErrorF <| sprintf "Cannot increment from register %i because register has no value." oldRegister.Index
-        ResultF.bind f oldRegisterOrError
+        ResultFbind f oldRegisterOrError
 
     let private runDecrementInstruction machineState registerIndex =
         let oldRegisterOrError = getRegisterByIndex machineState.Registers registerIndex
@@ -374,7 +391,7 @@ module HmrpEvaluator =
                                 HumanValue = Some newValue
                         }
                     | None -> ResultF.ErrorF <| sprintf "Cannot increment from register %i because register has no value." oldRegister.Index
-        ResultF.bind f oldRegisterOrError
+        ResultFbind f oldRegisterOrError
 
     let runInstruction (machineState : MachineState) (instruction : Instruction) =
         //printfn "Running line %i with instruction %s " (machineState.CurrentInstructionLine + 1) (instruction.ToString())
@@ -474,3 +491,11 @@ module HmrpEvaluator =
         for result in programLines do
             printfn "Line %i %s" i (result.ToString())
             i <- i + 1
+    
+    let onmessage a =
+        printfn "salut"
+
+    [<EntryPoint>]
+    let main argv =
+        printfn "main"
+        let returnCode = 0 in returnCode

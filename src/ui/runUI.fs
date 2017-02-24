@@ -61,6 +61,7 @@ module RunUI =
       }
   
   let private handleRun model =
+    (*
     let lines = getLines()
     let parsedLines = HmrpEvaluator.stringListToProgramList lines
     let programInitialState = HmrpEvaluator.defaultMachineState
@@ -91,6 +92,8 @@ module RunUI =
       model with
         EvaluationResult = Some evaluationResult;
     }
+    *)
+    model
 
   let processRunAction model action =
     match action with

@@ -1,7 +1,6 @@
 namespace ViewMain
 
 open System.IO
-open Hmrp
 open Fable.Core 
 open Fable.Import
 open Fable.Core.JsInterop

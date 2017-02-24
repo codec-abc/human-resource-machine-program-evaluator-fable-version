@@ -8,8 +8,11 @@
 
   <ItemGroup>
     <Compile Include="src/evaluator/result.fs" />  
+    <Compile Include="src/evaluator/hmrpDataStructure.fs" />
+    <!--
     <Compile Include="src/evaluator/hmrpEvaluator.fs" />
-    <Compile Include="src/evaluator/test.fs" />
+    <Compile Include="src/evaluator/test.fs" /> 
+    -->
     <Compile Include="src/ui/viewModel.fs" />
     <Compile Include="src/ui/registerUI.fs" />
     <Compile Include="src/ui/inputUI.fs" />

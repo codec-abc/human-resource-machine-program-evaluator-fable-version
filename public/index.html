@@ -18,5 +18,11 @@
         <br/>
         <div id="app" class="app"/>
     <script src="bundle.js" type="text/javascript"> </script>
+
+    <script type="text/javascript">
+            var evaluator = "hmrpEvaluator.js";
+            window.hmrpEvaluatorWebWorker = new window.Worker(evaluator);
+
+    </script>
     </body>
 </html>

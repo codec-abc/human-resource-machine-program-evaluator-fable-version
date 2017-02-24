@@ -20,6 +20,7 @@ npm install
 ### Compile
 
 ```bash
+fable ./src/evaluator/hmrpEvaluator.fsx --outDir ./output && webpack --config webpack.config.webWorker.js
 fable
 webpack
 ```

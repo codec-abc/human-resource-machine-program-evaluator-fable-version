@@ -35,3 +35,4 @@ node_modules/
 output/
 output/**
 public/bundle*
+public/hmrpEvaluator*
