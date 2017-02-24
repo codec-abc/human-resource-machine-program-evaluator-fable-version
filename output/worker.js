@@ -16,8 +16,8 @@ var computations = {};
 onmessage = function(e) 
 {
     var uuid = guid();
-    //var NEW_STATE_CASE = "NewState";
-    //var END_CASE =  "End";
+    var NEW_STATE_CASE = "NewState";
+    var END_CASE =  "End";
 
     if (e.data === "STOP")
     {
@@ -27,9 +27,8 @@ onmessage = function(e)
     {
         var initialState = Evaluator.runFirstStep(e.data);
         postMessage(JSON.stringify(initialState));
-
         computations[uuid] = {
-            shouldContinue : initialState.NewState != undefined,
+            shouldContinue : initialState.Case === NEW_STATE_CASE,
             state : initialState
         };
 
@@ -38,9 +37,9 @@ onmessage = function(e)
             {
                 setTimeout(function ()  
                 {
-                    var newState = Evaluator.runStep(computations[uuid].state.NewState);
+                    var newState = Evaluator.runStep(computations[uuid].state.Fields[0]);
                     postMessage(JSON.stringify(newState));
-                    computations[uuid].shouldContinue = newState.NewState != undefined;
+                    computations[uuid].shouldContinue = newState.Case === NEW_STATE_CASE;
                     computations[uuid].state = newState;
                     if (computations[uuid].shouldContinue)
                     {
