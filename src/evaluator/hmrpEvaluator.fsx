@@ -431,14 +431,14 @@ module HmrpEvaluator =
         while keepRunning do
             let nextStepResult = runStep currentState
             match nextStepResult with
-            | End errorMsg -> 
-                //printfn "%s\n" errorMsg
-                programStoppedReason <- errorMsg
-                keepRunning <- false
-            | NewState state ->
-                //printfn "%s\n" <| state.ToString()
-                allStates <- List.append allStates [state]
-                currentState <- state
+                | End errorMsg -> 
+                    //printfn "%s\n" errorMsg
+                    programStoppedReason <- errorMsg
+                    keepRunning <- false
+                | NewState state ->
+                    //printfn "%s\n" <| state.ToString()
+                    allStates <- List.append allStates [state]
+                    currentState <- state
         (allStates, programStoppedReason)
 
     let printState state =
@@ -492,10 +492,37 @@ module HmrpEvaluator =
             printfn "Line %i %s" i (result.ToString())
             i <- i + 1
     
-    let onmessage a =
-        printfn "salut"
+    let runFirstStep (input : obj) =
+        let lines = ofJson<string list> <| unbox (input?lines)
+        let registers = ofJson<Register list> <| unbox (input?registers)
+        let inputs = ofJson<int list> <| unbox (input?inputs)
 
-    [<EntryPoint>]
-    let main argv =
-        printfn "main"
-        let returnCode = 0 in returnCode
+        let parsedLines = stringListToProgramList lines
+        let programInitialState = defaultMachineState
+
+        let state = {
+            programInitialState with
+                Inputs = inputs;
+                Registers = registers;
+                ProgramLines = parsedLines;
+        }
+
+        let nextStepResult = runStep state
+        (*
+        let (allStates, programStoppedReason) = run state
+        let outputs =
+            if allStates.Length > 0 then
+                let lastState = allStates |> List.rev|> List.head
+                lastState.Outputs
+            else
+                []
+
+        let evaluationResult = {
+            CauseOfStop = programStoppedReason;
+            EvaluationStates = allStates;
+            CurrentlySelectedState = allStates.Length - 1;
+        }
+        *)
+
+        //evaluationResult
+        nextStepResult

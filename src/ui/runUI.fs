@@ -61,38 +61,17 @@ module RunUI =
       }
   
   let private handleRun model =
-    (*
     let lines = getLines()
-    let parsedLines = HmrpEvaluator.stringListToProgramList lines
-    let programInitialState = HmrpEvaluator.defaultMachineState
     let registers = buildRegisters model
     let inputs = buildInputs model
 
-    let state = {
-      programInitialState with
-        Inputs = inputs;
-        Registers = registers;
-        ProgramLines = parsedLines;
-    }
-    let (allStates, programStoppedReason) = HmrpEvaluator.run state
-    let outputs =
-      if allStates.Length > 0 then
-        let lastState = allStates |> List.rev|> List.head
-        lastState.Outputs
-      else
-        []
+    let result = createObj [
+      "lines" ==> toJson lines
+      "registers" ==> toJson registers
+      "inputs" ==> toJson inputs
+    ]
 
-    let evaluationResult = {
-      CauseOfStop = programStoppedReason;
-      EvaluationStates = allStates;
-      CurrentlySelectedState = allStates.Length - 1;
-    }
-
-    {
-      model with
-        EvaluationResult = Some evaluationResult;
-    }
-    *)
+    Browser.window?hmrpEvaluatorWebWorker?postMessage(result)
     model
 
   let processRunAction model action =

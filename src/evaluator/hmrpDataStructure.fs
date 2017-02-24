@@ -3,7 +3,6 @@ namespace Hmrp
 open System
 open System.Text.RegularExpressions
 open System.Collections.Generic
-open ResultF
 
 module HmrpEvaluator =
 

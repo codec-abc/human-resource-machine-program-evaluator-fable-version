@@ -39,6 +39,8 @@ npm install -g live-server
 Then in a different terminal for each command 
 
 ```
+fable ./src/evaluator/hmrpEvaluator.fsx --outDir ./output -w 
+webpack --config webpack.config.webWorker.js -w
 fable -w
 webpack -w
 live-server
