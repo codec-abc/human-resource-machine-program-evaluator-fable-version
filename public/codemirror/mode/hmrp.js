@@ -130,7 +130,7 @@ CodeMirror.defineMode("hmrp", function ()
 
                     if (isJumpInstruction)
                     {
-                        var isMatch = false
+                        var isMatch = false;
                         while (!isMatch && !stream.eol())
                         {
                             halfLine = halfLine + stream.next();
@@ -144,7 +144,7 @@ CodeMirror.defineMode("hmrp", function ()
                     }
                     else
                     {
-                        var isMatch = false
+                        var isMatch = false;
                         while (!isMatch && !stream.eol())
                         {
                             halfLine = halfLine + stream.next();
