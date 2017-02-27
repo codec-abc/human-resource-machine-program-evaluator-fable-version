@@ -1,6 +1,3 @@
-// CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: http://codemirror.net/LICENSE
-
 CodeMirror.defineMode("hmrp", function () 
 {
     var LabelPattern = "^(\\w+):$";
@@ -63,20 +60,24 @@ CodeMirror.defineMode("hmrp", function ()
         {
             if (state.isConsumingJumpEndLine)
             {
+                
                 while (!stream.eol())
                 {
                     stream.next();
                 }
+                
                 state.isConsumingJumpEndLine = false;
                 return "property";
             }
 
             if (state.isConsumingRegisterInstructionEndLine)
             {
+                
                 while (!stream.eol())
                 {
                     stream.next();
                 }
+                
                 state.isConsumingRegisterInstructionEndLine = false;
                 return "number";
             }
@@ -130,7 +131,7 @@ CodeMirror.defineMode("hmrp", function ()
                     if (isJumpInstruction)
                     {
                         var isMatch = false
-                        while (!isMatch)
+                        while (!isMatch && !stream.eol())
                         {
                             halfLine = halfLine + stream.next();
                             var isMatch =
@@ -144,7 +145,7 @@ CodeMirror.defineMode("hmrp", function ()
                     else
                     {
                         var isMatch = false
-                        while (!isMatch)
+                        while (!isMatch && !stream.eol())
                         {
                             halfLine = halfLine + stream.next();
                             var isMatch =
