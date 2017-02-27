@@ -10,7 +10,7 @@
   "license": "ISC",
   "devDependencies": {
     "fable-arch": "^0.10.1",
-    "fable-compiler": "^0.7.42",
+    "fable-compiler": "^0.7.46",
     "fable-import": "0.0.3",
     "source-map-loader": "^0.1.6",
     "webpack": "^2.2.1"
