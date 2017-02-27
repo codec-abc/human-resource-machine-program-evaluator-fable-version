@@ -19,7 +19,7 @@ var postStop = function()
 {
     var obj = {
         Case : END_CASE,
-        Fields : ["Computation canceled"]
+        Fields : ["Computation canceled."]
     };
     postMessage(obj);
 }
