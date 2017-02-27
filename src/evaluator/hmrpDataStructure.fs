@@ -27,60 +27,15 @@ module HmrpEvaluator =
         }
         override x.ToString() = "Register at " + string x.Index
 
-    type Label = 
-        {
-            Name : string;
-            Line : int 
-        }
-        override x.ToString() = "Label named " + x.Name + " at line " + string x.Line
-
-    type Instruction = 
-        | Inbox
-        | Outbox
-        | JumpIfNegative of string
-        | JumpIfZero of string
-        | Jump of string
-        | CopyTo of int
-        | CopyFrom of int
-        | Increment of int
-        | Decrement of int
-        | Add of int
-        | Subtract of int
-
-        override x.ToString() = 
-            match x with
-                | Inbox -> "Inbox"
-                | Outbox -> "Outbox"
-                | JumpIfNegative label -> "Jump if negative to : " + label.ToString()
-                | JumpIfZero label -> "Jump if zero to : " + label.ToString()
-                | Jump label -> "Jump to : " + label.ToString()
-                | CopyTo register -> "Copy to : " + register.ToString()
-                | CopyFrom register -> "Copy from : " + register.ToString()
-                | Increment register -> "Increment : " + register.ToString()
-                | Decrement register -> "Decrement : " + register.ToString()
-                | Add register -> "Add with : " + register.ToString()
-                | Subtract register -> "Subtract with : " + register.ToString()
-
-    type ProgramLine =
-        | MeaningLessLine
-        | InstructionLine of Instruction
-        | LabelLine of Label
-        override x.ToString() = 
-            match x with
-                | MeaningLessLine -> "Line is meaningless and can be skipped"
-                | InstructionLine instruction -> "Line is an instruction : "  + instruction.ToString()
-                | LabelLine label -> "Line is a label : " + label.ToString()
-
     type MachineState = 
         {
             Inputs : int array;
             Outputs : int array;
             Registers : Register array;
             HumanValue : int option;
-            ProgramLines : ProgramLine array;
             CurrentInstructionLine : int;
         }
-        (*
+        
         override x.ToString() =
             let inputsAsString = listToString (List.ofArray x.Inputs)
             let outputsAsString = listToString (List.ofArray x.Outputs)
@@ -88,8 +43,8 @@ module HmrpEvaluator =
             let registersAsString = listToString registersAsStringList
             let humanValueAsString = 
                 match x.HumanValue with
-                | None -> "None"
-                | Some aValue -> string aValue
+                    | None -> "None"
+                    | Some aValue -> string aValue
             let result =
                 "State" + "\n" + 
                 "    Inputs: " + inputsAsString + "\n" + 
@@ -98,7 +53,6 @@ module HmrpEvaluator =
                 "    Human Value: " + humanValueAsString + "\n" + 
                 "    Current Line: " + x.CurrentInstructionLine.ToString()
             result
-            *)
 
     type InstructionEvaluationResult =
         | End of string

@@ -12,12 +12,41 @@ function guid()
 }
 
 var computations = {};
+var NEW_STATE_CASE = "NewState";
+var END_CASE =  "End";
+
+var postData = function(msg)
+{
+    if (msg.Case === NEW_STATE_CASE)
+    {
+        var struct = msg.Fields[0];
+        var newInputs = [];
+        for(var i = 0; i < struct.Inputs.length; i++)
+        {
+            newInputs.push(struct.Inputs[i]);
+        }
+        struct.Inputs = newInputs;
+
+        var newOutputs = [];
+        for(var i = 0; i < struct.Outputs.length; i++)
+        {
+            newOutputs.push(struct.Outputs[i]);
+        }
+        struct.Outputs = newOutputs;
+
+        var newRegisters = [];
+        for(var i = 0; i < struct.Registers.length; i++)
+        {
+            newRegisters.push(struct.Registers[i]);
+        }
+        struct.Registers = newRegisters;
+    }
+    postMessage(msg);
+};
 
 onmessage = function(e) 
 {
     var uuid = guid();
-    var NEW_STATE_CASE = "NewState";
-    var END_CASE =  "End";
 
     if (e.data === "STOP")
     {
@@ -26,7 +55,7 @@ onmessage = function(e)
     else
     {
         var initialState = Evaluator.runFirstStep(e.data);
-        postMessage(initialState);
+        postData(initialState);
         computations[uuid] = {
             shouldContinue : initialState.Case === NEW_STATE_CASE,
             state : initialState
@@ -38,7 +67,7 @@ onmessage = function(e)
                 setTimeout(function ()  
                 {
                     var newState = Evaluator.runStep(computations[uuid].state.Fields[0]);
-                    postMessage(newState);
+                    postData(newState);
                     computations[uuid].shouldContinue = newState.Case === NEW_STATE_CASE;
                     computations[uuid].state = newState;
                     if (computations[uuid].shouldContinue)

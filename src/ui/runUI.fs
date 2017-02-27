@@ -2,6 +2,7 @@ namespace View
 
 open System.IO
 open Hmrp
+open Hmrp.HmrpEvaluator
 open Fable.Core 
 open Fable.Import
 open Fable.Core.JsInterop
@@ -87,6 +88,26 @@ module RunUI =
       | ChangeBrowsedState obj -> handleChangeBrowsedState obj model
       | Run -> handleRun model
 
+  let private rowHead xs =
+    tr [] [ for x in xs -> th [] [x]]
+
+  let private row xs = 
+    tr [] [ for x in xs -> td [] [x]]
+
+  let private getRegistersUILines (aState : MachineState) =
+    let registers = Array.toList aState.Registers
+    let optionToStr = (fun a ->
+      match a with
+        | None -> "None"
+        | Some b -> b.ToString())
+
+    let result = 
+      registers 
+        |> List.map (fun st -> 
+          row [text (st.Index.ToString()); text (optionToStr st.RegisterValue)])
+    
+    result
+
   let viewRun model =
     if model.EvaluationResult.EvaluationStates.Length > 0 && model.EvaluationResult.CurrentlySelectedState < model.EvaluationResult.EvaluationStates.Length then
       let selectedState = model.EvaluationResult.EvaluationStates.[model.EvaluationResult.CurrentlySelectedState]
@@ -102,6 +123,27 @@ module RunUI =
         match model.EvaluationResult.CauseOfStop with
           | None -> "Not stopped yet."
           | Some causeOfStop -> causeOfStop
+      
+      let head =
+        thead
+          []
+          [
+            tr
+              []
+              [
+                th 
+                  [] 
+                  [text "Index "]
+                th 
+                  [] 
+                  [text "Value "]
+              ]
+          ]
+
+      let registersUI selectedState = 
+            List.append
+              [head]
+              (getRegistersUILines selectedState)
       
       let myDiv =
           [
@@ -161,7 +203,12 @@ module RunUI =
               []
               [text "Current Line: "]
             text <| (selectedState.CurrentInstructionLine + 1).ToString()
-            // TODO : add Registers ?
+            h3
+              []
+              [text "Registers: "]
+            table 
+              []
+              (registersUI selectedState)
           ]
       div [] myDiv
     else
