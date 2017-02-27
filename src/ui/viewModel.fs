@@ -52,6 +52,7 @@ module ViewModel =
     Registers : Register list;
     Inputs : Input list;
     EvaluationResult : EvaluationResult;
+    IsRunning : bool;
   }
 
   type Action =
@@ -70,4 +71,5 @@ module ViewModel =
           EvaluationStates = [];
           CurrentlySelectedState = 0;
         };
+      IsRunning = false;
     }

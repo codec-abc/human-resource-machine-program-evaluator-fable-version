@@ -53,6 +53,7 @@ module ViewMain =
               {
                 model with
                   EvaluationResult = evaluationResult;
+                  IsRunning = false;
               }
             | NewState newState ->
               let evaluationResult = {
@@ -68,6 +69,11 @@ module ViewMain =
         newModel
 
   let view model =
+    let runButtonClass =
+      match model.IsRunning with
+        | false -> classy "fa fa-play"
+        | true -> classy "fa fa-stop"
+
     div
       [ classy "ui two column stackable grid" ]
       [
@@ -145,7 +151,7 @@ module ViewMain =
                   [
                     i
                       [
-                        classy "fa fa-play"
+                        runButtonClass
                         attribute "aria-hidden" "true"
                       ]
                       []

@@ -62,34 +62,39 @@ module RunUI =
       }
   
   let private handleRun model =
-    let lines = getLines()
-    let registers = buildRegisters model
-    let inputs = buildInputs model
-    let result = 
-      createObj [
-        "lines" ==> toJson lines
-        "registers" ==> toJson registers
-        "inputs" ==> toJson inputs
-      ]
+    if model.IsRunning <> true then
+      let lines = getLines()
+      let registers = buildRegisters model
+      let inputs = buildInputs model
+      let result = 
+        createObj [
+          "lines" ==> toJson lines
+          "registers" ==> toJson registers
+          "inputs" ==> toJson inputs
+        ]
 
-    Browser.window?hmrpEvaluatorWebWorker?postMessage(result) |> ignore
-    {
-      model with
-        EvaluationResult = 
-          {
-            CauseOfStop = None;
-            EvaluationStates = [];
-            CurrentlySelectedState = 0;
-          }
-    }
+      Browser.window?hmrpEvaluatorWebWorker?postMessage(result) |> ignore
+      {
+        model with
+          EvaluationResult = 
+            {
+              CauseOfStop = None;
+              EvaluationStates = [];
+              CurrentlySelectedState = 0;
+            }
+          IsRunning = true;
+      }
+    else
+      Browser.window?hmrpEvaluatorWebWorker?postMessage("STOP") |> ignore
+      {
+        model with
+          IsRunning = false;
+      }
 
   let processRunAction model action =
     match action with
       | ChangeBrowsedState obj -> handleChangeBrowsedState obj model
       | Run -> handleRun model
-
-  let private rowHead xs =
-    tr [] [ for x in xs -> th [] [x]]
 
   let private row xs = 
     tr [] [ for x in xs -> td [] [x]]
