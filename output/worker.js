@@ -15,6 +15,15 @@ var computations = {};
 var NEW_STATE_CASE = "NewState";
 var END_CASE =  "End";
 
+var postStop = function()
+{
+    var obj = {
+        Case : END_CASE,
+        Fields : ["Computation canceled"]
+    };
+    postMessage(obj);
+}
+
 var postData = function(msg)
 {
     if (msg.Case === NEW_STATE_CASE)
@@ -50,7 +59,13 @@ onmessage = function(e)
 
     if (e.data === "STOP")
     {
-        console.log("TODO");
+        for (var key in computations) 
+        {
+            if (!computations.hasOwnProperty(key)) continue;
+
+            var obj = computations[key];
+            obj.shouldContinue = false;
+        }
     }
     else
     {
@@ -68,13 +83,24 @@ onmessage = function(e)
                 {
                     var newState = Evaluator.runStep(computations[uuid].state.Fields[0]);
                     postData(newState);
-                    computations[uuid].shouldContinue = newState.Case === NEW_STATE_CASE;
+                    computations[uuid].shouldContinue = computations[uuid].shouldContinue && (newState.Case === NEW_STATE_CASE);
                     computations[uuid].state = newState;
                     if (computations[uuid].shouldContinue)
                     {
                         runRecursively();
                     }
+                    else
+                    {
+                        if (newState.Case === NEW_STATE_CASE)
+                        {
+                            postStop();
+                        }
+                    }
                 }, 0);
+            }
+            else
+            {
+                postStop();
             }
         }
 

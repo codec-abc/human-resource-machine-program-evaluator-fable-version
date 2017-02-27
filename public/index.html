@@ -25,7 +25,6 @@
         window.hmrpEvaluatorWebWorker.onmessage = function(e) 
         {
             var msg = e.data;
-            console.log(msg);
             window.evaluatorWorkerCallback(JSON.stringify(msg));
         }
     </script>
