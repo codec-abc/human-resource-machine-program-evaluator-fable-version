@@ -1,4 +1,4 @@
-# HMRP Evaluator Fable
+# HMRP Evaluator Fable [![CircleCI](https://circleci.com/gh/codec-abc/human-resource-machine-program-evaluator-fable-version/tree/master.svg?style=svg)](https://circleci.com/gh/codec-abc/human-resource-machine-program-evaluator-fable-version/tree/master)
 
 [Live Version!](https://codec-abc.github.io/human-resource-machine-program-evaluator-fable-version/index.html)
 
