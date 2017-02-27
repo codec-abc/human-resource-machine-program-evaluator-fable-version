@@ -14,3 +14,4 @@ test:
         - fable 
         - fable ./src/evaluator/hmrpEvaluator.fsx --outDir ./output && webpack --config webpack.config.webWorker.js
         - webpack
+        - bash deployToGhPages.sh
