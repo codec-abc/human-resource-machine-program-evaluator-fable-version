@@ -19,7 +19,7 @@ git checkout -b gh-pages
 
 
 # Delete and move files.
-find . -maxdepth 1 ! -name 'build' ! -name '.git' ! -name '.gitignore' -exec rm -rf {} \;
+find . -maxdepth 1 ! -name 'public' ! -name '.git' ! -name '.gitignore' -exec rm -rf {} \;
 mv public/* .
 rm -R public/
 
