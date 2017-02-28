@@ -100,7 +100,11 @@ module RunUI =
     tr [] [ for x in xs -> td [] [x]]
 
   let private getRegistersUILines (aState : MachineState) =
-    let registers = Array.toList aState.Registers
+    let registers = 
+      aState.Registers
+      |> Array.toList 
+      |> List.sortBy (fun register -> register.Index)
+
     let optionToStr = (fun a ->
       match a with
         | None -> "None"
