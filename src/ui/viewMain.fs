@@ -201,7 +201,7 @@ module ViewMain =
       ]
 
   let main argv =
-    let initModel = createDefaultModel()
+    let initModel = createSimpleLoopModel()
     createSimpleApp initModel view update Virtualdom.createRender
       |> withStartNodeSelector "#app"
       |> withProducer 

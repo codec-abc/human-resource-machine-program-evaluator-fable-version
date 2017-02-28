@@ -73,3 +73,29 @@ module ViewModel =
         };
       IsRunning = false;
     }
+
+  let createSimpleLoopModel () =
+    {
+      Registers = 
+        [
+          {
+            Enabled = false;
+            Value = 0;
+            UIIndex = 0;
+          }
+        ];
+      Inputs = 
+        [
+          {
+            UIIndex = 0;
+            Value = 10;
+          }
+        ];
+      EvaluationResult = 
+        {
+          CauseOfStop = None;
+          EvaluationStates = [];
+          CurrentlySelectedState = 0;
+        };
+      IsRunning = false;
+    }
