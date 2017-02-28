@@ -17,7 +17,7 @@ open Hmrp.HmrpEvaluator
 module ViewMain =
 
   let defaultLines = 
-    "-- Simple loop that count to 0\n" +
+    "-- Simple loop that counts to 0\n" +
     " INBOX\n" +
     " COPYTO 0\n" +
     " JUMPZ b\n" +
