@@ -12,21 +12,39 @@
         <link rel="stylesheet" href="codemirror/lib/codemirror.css">
         <link rel="stylesheet" href="codemirror/theme/monokai.css">
         <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
-        <link rel="stylesheet" href="app.css"
+        <link rel="stylesheet" href="app.css">
+        <script src="jquery/jquery.js" type="text/javascript"></script>
     </head>
     <body>
-        <br/>
-        <div id="app" class="app"/>
-    <script src="bundle.js" type="text/javascript"> </script>
+        <div id="app" class="app" style="height:100%;"/>
+        <script src="bundle.js" type="text/javascript"> </script>
 
-    <script type="text/javascript">
-        var evaluator = "hmrpEvaluator.js";
-        window.hmrpEvaluatorWebWorker = new window.Worker(evaluator);
-        window.hmrpEvaluatorWebWorker.onmessage = function(e) 
-        {
-            var msg = e.data;
-            window.evaluatorWorkerCallback(JSON.stringify(msg));
-        }
-    </script>
+        <script type="text/javascript">
+            var evaluator = "hmrpEvaluator.js";
+            window.hmrpEvaluatorWebWorker = new window.Worker(evaluator);
+            window.hmrpEvaluatorWebWorker.onmessage = function(e) 
+            {
+                var msg = e.data;
+                window.evaluatorWorkerCallback(JSON.stringify(msg));
+            }
+
+            var setSize = function()
+            {
+                var pageHeight = $("#content")[0].clientHeight;
+                window.myCodeMirror.setSize("100%", pageHeight);
+            }
+
+            $(window).resize(function() 
+            {
+                setSize();
+            });
+
+            window.setTimeout(function() 
+                {
+                    setSize();
+                }
+            ,10);
+
+        </script>
     </body>
 </html>

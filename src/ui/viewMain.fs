@@ -41,6 +41,11 @@ module ViewMain =
       | RunAction action -> processRunAction model action
       | InputAction inputAction -> processInputAction model inputAction
       | RegisterAction registerAction -> processRegisterAction model registerAction
+      | SelectedPanelChangedAction newPanel ->
+        {
+          model with
+            SelectedPanel = newPanel;
+        }
       | WorkerAction (instructionEvaluationResult : InstructionEvaluationResult) -> 
         let newModel = 
           match instructionEvaluationResult with
@@ -68,135 +73,251 @@ module ViewMain =
               }
         newModel
 
-  let view model =
+  let private generateMenu model =
+    div 
+      [classy "ui thin left vertical inverted labeled visible sidebar menu"]
+      [
+        a 
+          [
+            classy "item"
+            onMouseClick (fun e -> SelectedPanelChangedAction Help)
+          ]
+          [
+            i 
+              [
+                classy "fa fa-question-circle block layout" 
+                attribute "style" "font-size: large;width: 2em;"
+              ] 
+              []
+            text "Help"
+          ]
+        
+        a 
+          [
+            classy "item"
+            onMouseClick (fun e -> SelectedPanelChangedAction Register)
+          ]
+          [
+            i 
+              [
+                classy "block layout fa fa-cube" 
+                attribute "style" "font-size: large;width: 2em;"
+              ]
+              []
+            text "Registers"
+          ]
+        a 
+          [
+            classy "item"
+            onMouseClick (fun e -> SelectedPanelChangedAction Input)
+          ]
+          [
+            i 
+              [
+                classy "block layout fa fa-arrow-right" 
+                attribute "style" "font-size: large;width: 2em;"
+              ] 
+              []
+            text "Inputs"
+          ]
+        a 
+          [
+            classy "item"
+            onMouseClick (fun e -> SelectedPanelChangedAction Debug)
+          ]
+          [
+            i 
+              [
+                classy "block layout fa fa-bug" 
+                attribute "style" "font-size: large;width: 2em;"
+              ]
+              []
+            text "Debug"
+          ]
+      ]
+
+  let private generateRegisterUI model =
+    div
+      [ 
+        classy "column"
+        attribute "style" "height: 100%;overflow: auto"
+      ]
+      [
+        div
+          [ classy "ui" ]
+          [
+            h2 
+              []
+              [text "Registers:"]
+            button
+              [ 
+                classy "ui button"
+                onMouseClick (fun e -> RegisterAction CreateRegister)
+              ]
+              [
+                i
+                  [
+                    classy "fa fa-plus"
+                    attribute "aria-hidden" "true"
+                  ]
+                  []
+              ]
+            div
+              []
+              (viewRegisters model)
+          ]
+      ]
+  
+  let private generateInputUI model =
+    div
+      [ 
+        classy "column"
+        attribute "style" "height: 100%;overflow: auto"
+      ]
+      [
+        div
+          [
+            classy "ui"
+          ]
+          [
+            h2
+              []
+              [text "Inputs:"]
+            button
+              [ 
+                classy "ui button"
+                onMouseClick (fun e -> InputAction CreateInput)
+              ]
+              [
+                i
+                  [
+                    classy "fa fa-plus"
+                    attribute "aria-hidden" "true"
+                  ]
+                  []
+              ]
+            div
+              []
+              (viewInputs model) 
+          ]
+      ]
+
+  let generateDebugUI model =
     let runButtonClass =
       match model.IsRunning with
         | false -> classy "fa fa-play"
         | true -> classy "fa fa-stop"
 
     div
-      [ classy "ui two column stackable grid" ]
+      [
+        classy "column"
+        attribute "style" "height: 100%;overflow: auto"
+      ]
       [
         div
-          [ classy "three wide column"]
+          [classy "ui"]
           [
-            div
-              [ classy "ui segment" ]
+            h2
+              []
+              [text "Run & Output"]
+            button
               [
-                h2 
-                  []
-                  [text "Registers:"]
-                button
-                  [ 
-                    classy "ui button"
-                    onMouseClick (fun e -> RegisterAction CreateRegister)
-                  ]
-                  [
-                    i
-                      [
-                        classy "fa fa-plus"
-                        attribute "aria-hidden" "true"
-                      ]
-                      []
-                  ]
-                div
-                  []
-                  (viewRegisters model)
+                classy "ui button"
+                onMouseClick (fun e -> RunAction Run)
               ]
-              
+              [
+                i
+                  [
+                    runButtonClass
+                    attribute "aria-hidden" "true"
+                  ]
+                  []
+              ]
+            (viewRun model)
           ]
+      ]
+
+  let private generateCodeUI model =
+    div
+      [ 
+        classy "column" 
+        attribute "style" "padding: 0;"
+      ]
+      [
         div
-          [ classy "three wide column" ]
           [
-            div
-              [
-                classy "ui segment"
-              ]
-              [
-                h2
-                  []
-                  [text "Inputs:"]
-                button
-                  [ 
-                    classy "ui button"
-                    onMouseClick (fun e -> InputAction CreateInput)
-                  ]
-                  [
-                    i
-                      [
-                        classy "fa fa-plus"
-                        attribute "aria-hidden" "true"
-                      ]
-                      []
-                  ]
-                div
-                  []
-                  (viewInputs model) 
-              ]
+            classy "ui"
           ]
-        div
-          [classy "three wide column"]
           [
             div
-              [classy "ui segment"]
-              [
-                h2
-                  []
-                  [text "Run & Output"]
-                button
-                  [
-                    classy "ui button"
-                    onMouseClick (fun e -> RunAction Run)
-                  ]
-                  [
-                    i
-                      [
-                        runButtonClass
-                        attribute "aria-hidden" "true"
-                      ]
-                      []
-                  ]
-                (viewRun model)
+              [ 
+                classy "ide"
+                attribute "id" "ide"
+                hook 
+                  "hook"
+                  (HookHelper.CreateHook 
+                    (fun node propName otherNode ->
+                      let codeConfig = 
+                        createObj 
+                          [
+                            "theme" ==> "monokai"
+                            "value" ==> defaultLines
+                            "mode" ==> "hmrp"
+                            "lineNumbers" ==> true
+                          ]
+                      if not <| unbox(Browser.window?HasInit) then
+                        Browser.window.setTimeout(
+                          (fun w ->
+                            Browser.window?HasInit <- true
+                            Browser.window?myCodeMirror <- Browser.window?CodeMirror(node, codeConfig) |> ignore
+                            Browser.window
+                          ),
+                          0) |> ignore
+                      else
+                        () ))
               ]
+              []
           ]
+      ]
+
+  let private generateHelpUI model =
+    div
+      [
+        classy "column"
+        attribute "style" "height: 100%;overflow: auto"
+      ]
+      [text "Todo"]
+
+  let getSelectedPanelUI model =
+    match model.SelectedPanel with
+      | Help -> generateHelpUI model
+      | Debug -> generateDebugUI model
+      | Register -> generateRegisterUI model
+      | Input -> generateInputUI model
+
+  let view model =
+    div
+      [
+        attribute "style" "height:100%;"
+      ]
+      [
+        generateMenu model
         div
-          [ classy "seven wide column" ]
+          [ 
+            classy "pusher"
+            attribute "id" "content"
+          ]
           [
-            div
-              [classy "ui segment"]
+            div 
               [
-                h2
-                  []
-                  [text "Code"]
-                div
-                  [ 
-                    classy "ide"
-                    attribute "id" "ide"
-                    hook 
-                      "hook"
-                      (HookHelper.CreateHook 
-                        (fun node propName otherNode ->
-                          let codeConfig = 
-                            createObj 
-                              [
-                                "theme" ==> "monokai"
-                                "value" ==> defaultLines
-                                "mode" ==> "hmrp"
-                                "lineNumbers" ==> true
-                              ]
-                          if not <| unbox(Browser.window?HasInit) then
-                            Browser.window.setTimeout(
-                              (fun w ->
-                                Browser.window?HasInit <- true
-                                Browser.window?myCodeMirror <- Browser.window?CodeMirror(node, codeConfig) |> ignore
-                                Browser.window
-                              ),
-                              0) |> ignore
-                          else
-                            () ))
-                  ]
-                  []
+                classy "ui two column grid container"
+                attribute "id" "innerContainer"
+                attribute "style" "margin-bottom: 0;margin-top: 0;"
               ]
+              [
+                getSelectedPanelUI model
+                generateCodeUI model
+            ]
           ]
       ]
 

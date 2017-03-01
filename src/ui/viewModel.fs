@@ -48,11 +48,18 @@ module ViewModel =
     | Run
     | ChangeBrowsedState of obj
 
+  type Panel =
+    | Help
+    | Register
+    | Input
+    | Debug
+
   type Model = {
     Registers : Register list;
     Inputs : Input list;
     EvaluationResult : EvaluationResult;
     IsRunning : bool;
+    SelectedPanel : Panel;
   }
 
   type Action =
@@ -60,6 +67,7 @@ module ViewModel =
     | RegisterAction of RegisterAction
     | RunAction of RunAction
     | WorkerAction of InstructionEvaluationResult
+    | SelectedPanelChangedAction of Panel
 
   let createDefaultModel () =
     {
@@ -72,6 +80,7 @@ module ViewModel =
           CurrentlySelectedState = 0;
         };
       IsRunning = false;
+      SelectedPanel = Help;
     }
 
   let createSimpleLoopModel () =
@@ -98,4 +107,5 @@ module ViewModel =
           CurrentlySelectedState = 0;
         };
       IsRunning = false;
+      SelectedPanel = Help;
     }

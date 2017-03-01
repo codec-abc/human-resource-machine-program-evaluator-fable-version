@@ -1,19 +1,13 @@
-.CodeMirror {
-    height: 90%;
+#innerContainer { 
+  width : 100% !important;
 }
 
-.column {
+#body {
     height: 100%;
+    overflow: hidden
 }
 
-.app {
-    height: 100%;
-}
-
-.ui.segment {
-    height: 100%;
-}
-
-.ide {
+#content {
+    width: calc(100% - 150px);
     height: 100%;
 }
