@@ -104,7 +104,7 @@ module InputUI =
       onInputValueChange
       attribute "type" "number"
       attribute "value" (input_model.Value.ToString())
-      Style [("width", "50px")]
+      Style [("width", "80px")]
       hook 
           "hook"
           (HookHelper.CreateHook (fun node propName ->
@@ -153,7 +153,21 @@ module InputUI =
           [text <| "" + input_model.UIIndex.ToString()]
         td
           []
-          [input inputValueAttributes]
+          [
+             div
+              [classy "ui form"]
+              [
+                div
+                  [classy "inline field"]
+                  [
+                    div
+                      [classy "ui range"]
+                      [
+                        input inputValueAttributes
+                      ]
+                  ]
+              ]
+          ]
         td
           []
           [

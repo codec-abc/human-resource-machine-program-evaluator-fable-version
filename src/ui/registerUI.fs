@@ -19,7 +19,7 @@ module RegisterUI =
         onRegisterValueChange
         attribute "type" "number"
         attribute "value" (register.Value.ToString())
-        Style [("width", "50px")]
+        Style [("width", "80px")]
         hook 
           "hook"
           (HookHelper.CreateHook (fun node propName ->
@@ -94,10 +94,39 @@ module RegisterUI =
           [text <| "" + register.UIIndex.ToString()]
         td
           []
-          [input inputStateAttributes]
+          [
+            div
+              [classy "ui form"]
+              [
+                div
+                  [classy "inline field"]
+                  [
+                    div
+                      [classy "ui checkbox"]
+                      [
+                        input inputStateAttributes
+                        label [] [text ""]
+                      ]
+                  ]
+              ]
+          ]
         td
           [] 
-          [input inputValueAttributes]
+          [
+            div
+              [classy "ui form"]
+              [
+                div
+                  [classy "inline field"]
+                  [
+                    div
+                      [classy "ui range"]
+                      [
+                        input inputValueAttributes
+                      ]
+                  ]
+              ]
+          ]
         td
           [
             attribute "style" "padding:0;"
