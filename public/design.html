@@ -8,39 +8,36 @@
     </script>
     <script src="codemirror/lib/codemirror.js"></script>
     <script src="codemirror/mode/hmrp.js"></script>
+    <script src="jquery/jquery.js"></script>
     <link rel="stylesheet" href="codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="codemirror/theme/monokai.css">
     <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="app.css" head="">
 </head>
 
-<body>
+<body style="background: #66ff66;">
     <div class="ui thin left vertical inverted labeled visible sidebar menu" id="sidebar">
         <a class="item">
            <i class="fa fa-question-circle block layout"></i>
             Help
-
         </a>
         <a class="item">
             <i class="block layout fa fa-arrow-right"></i>
             Registers
-            
         </a>
         <a class="item">
             <i class="block layout fa fa-cube"></i>
             Inputs
-            
         </a>
         <a class="item">
             <i class="block layout fa fa-bug"></i>
             Debug
-            
         </a>
         
     </div>
-    <div class="pusher" id="content" style="width: calc(100% - 150px);">
+    <div class="pusher" id="content">
         <div class="ui two column grid container" id="innerContainer">
-            <div class="column" style="background:#6666ff;">
+            <div class="column" style="background:#6666ff;height: 100%;overflow: auto">
                 <div class="ui">
                     <h2>Run &amp; Output</h2>
                     <button class="ui button"><i class="fa fa-play" aria-hidden="true"></i>
@@ -85,7 +82,7 @@
             </div>
             <div class="column" style="background:#ff6666;">
                 <div class="ui">
-                    <h2>Code</h2>
+                    <h2 id="codeTitle">Code</h2>
                     <div id="ide"> </div>
                 </div>
             </div>
@@ -127,6 +124,16 @@
                 lineNumbers : true
             };
             window.myCodeMirror = window.CodeMirror(node, codeConfig);
+            var pageHeight = $("#content")[0].clientHeight;
+            var titleHeight = $("#codeTitle")[0].clientHeight;
+            window.myCodeMirror.setSize("100%", pageHeight - titleHeight - 42);
+
+            $(window).resize(function() 
+            {
+                var pageHeight = $("#content")[0].clientHeight;
+                var titleHeight = $("#codeTitle")[0].clientHeight;
+                window.myCodeMirror.setSize("100%", pageHeight - titleHeight - 42);
+            });
         </script>
     </div>
 </body>

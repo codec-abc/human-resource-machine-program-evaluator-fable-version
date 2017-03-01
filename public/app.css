@@ -28,3 +28,13 @@
     font-size: large;
     width: 20px;
 }
+
+#body {
+    height: 100%;
+    overflow: hidden
+}
+
+#content {
+    width: calc(100% - 150px);
+    height: 100%;
+}
