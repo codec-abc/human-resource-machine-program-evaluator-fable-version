@@ -213,6 +213,7 @@ module ViewMain =
             h2
               []
               [text "Inputs"]
+            text "Add an input: "
             button
               [ 
                 classy "ui button"
@@ -226,9 +227,35 @@ module ViewMain =
                   ]
                   []
               ]
-            div
-              []
-              (viewInputs model) 
+            br []
+            table
+              [
+                classy "ui table"
+              ]
+              (List.append
+                [
+                  thead 
+                    []
+                    [
+                      tr
+                        []
+                        [
+                          th 
+                            []
+                            [text "Index"]
+                          th
+                            []
+                            [text "Value"]
+                          th
+                            []
+                            [text "Move"]
+                          th
+                            []
+                            [text "Delete"]
+                        ]
+                    ] 
+                ]
+                (viewInputs model))
           ]
       ]
 
@@ -250,6 +277,7 @@ module ViewMain =
             h2
               []
               [text "Run & Output"]
+            text "Run the program: "
             button
               [
                 classy "ui button"
@@ -263,6 +291,7 @@ module ViewMain =
                   ]
                   []
               ]
+            br []
             (viewRun model)
           ]
       ]

@@ -119,64 +119,85 @@ module InputUI =
     let upButtonAttributes =
       if input_model.UIIndex = 0 then
         [
+          attribute "style" "padding-top:1px;padding-bottom:1px;font-size:small;"
           attribute "disabled" "true"
-          classy "ui button"
+          classy "ui compatc button"
           onMouseClick (fun a -> InputAction <| MoveInputValueUp input_model.UIIndex)
         ]
       else
         [
-          classy "ui button"
+          attribute "style" "padding-top:1px;padding-bottom:1px;font-size:small;"
+          classy "ui compact button"
           onMouseClick (fun a -> InputAction <| MoveInputValueUp input_model.UIIndex)
         ]
 
     let downButtonAttributes =
       if input_model.UIIndex = nbOfInputs - 1 then
         [
+          attribute "style" "padding-top:1px;padding-bottom:1px;font-size:small;"
           attribute "disabled" "true"
-          classy "ui button"
+          classy "ui compact button"
           onMouseClick (fun a -> InputAction <| MoveInputValueDown input_model.UIIndex)
         ]
       else
         [
-          classy "ui button"
+          attribute "style" "padding-top:1px;padding-bottom:1px;font-size:small;"
+          classy "ui compact button"
           onMouseClick (fun a -> InputAction <| MoveInputValueDown input_model.UIIndex)
         ]
-    div 
+    tr 
       []
       [
-        text <| "Input" + input_model.UIIndex.ToString() + ": "
-        text "Value: "
-        input inputValueAttributes
-        button
+        td
+          []
+          [text <| "" + input_model.UIIndex.ToString()]
+        td
+          []
+          [input inputValueAttributes]
+        td
+          []
           [
-            classy "ui button"
-            onMouseClick (fun a -> InputAction <| RemoveInputValue input_model.UIIndex)
-          ]
-          [
-            i
+            div
               [
-                  classy "fa fa-trash-o" 
-                  attribute "aria-hidden" "true"
+                classy "ui vertical icon buttons"
               ]
-              []
-          ]
-        button
-          upButtonAttributes
-          [
-            i 
               [
-                classy "fa fa-arrow-up"
+                button
+                  upButtonAttributes
+                  [
+                    i 
+                      [
+                        classy "fa fa-arrow-up"
+                      ]
+                      []
+                  ]
+                button
+                  downButtonAttributes
+                  [
+                    i 
+                      [
+                        classy "fa fa-arrow-down"
+                      ]
+                      []
+                  ]
               ]
-              []
           ]
-        button
-          downButtonAttributes
+        td
+          []
           [
-            i 
+            button
               [
-                classy "fa fa-arrow-down"
+                classy "ui button"
+                onMouseClick (fun a -> InputAction <| RemoveInputValue input_model.UIIndex)
               ]
-              []
+              [
+                i
+                  [
+                      classy "fa fa-trash-o" 
+                      attribute "aria-hidden" "true"
+                  ]
+                  []
+              ]
           ]
       ]
     

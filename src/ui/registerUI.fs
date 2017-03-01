@@ -59,8 +59,8 @@ module RegisterUI =
     let upButtonAttributes =
       if register.UIIndex = 0 then
         [
-          attribute "disabled" "true"
           attribute "style" "padding-top:1px;padding-bottom:1px;font-size:small;"
+          attribute "disabled" "true"
           classy "ui compact button"
           onMouseClick (fun a -> RegisterAction <| MoveRegisterValueUp register.UIIndex)
         ]
@@ -74,8 +74,8 @@ module RegisterUI =
     let downButtonAttributes =
       if register.UIIndex = nbOfRegister - 1 then
         [
-          attribute "disabled" "true"
           attribute "style" "padding-top:1px;padding-bottom:1px;font-size:small;"
+          attribute "disabled" "true"
           classy "ui compact button"
           onMouseClick (fun a -> RegisterAction <| MoveRegisterValueDown register.UIIndex)
         ]
