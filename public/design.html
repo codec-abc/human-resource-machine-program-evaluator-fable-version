@@ -22,11 +22,11 @@
             Help
         </a>
         <a class="item">
-            <i class="block layout fa fa-arrow-right" style="font-size: large;width: 2em;"></i>
+            <i class="block layout fa fa-cube" style="font-size: large;width: 2em;"></i>
             Registers
         </a>
         <a class="item">
-            <i class="block layout fa fa-cube" style="font-size: large;width: 2em;"></i>
+            <i class="block layout fa fa-arrow-right" style="font-size: large;width: 2em;"></i>
             Inputs
         </a>
         <a class="item">
@@ -38,8 +38,8 @@
     <div class="pusher" id="content">
         <div class="ui two column grid container" id="innerContainer" style="margin-bottom: 0;margin-top: 0;">
             <div class="column" style="height: 100%;overflow: auto"> <!-- background:#6666ff; -->
-                <!-- 
-                    <div class="ui">
+                <!--
+                <div class="ui">
                     <h2>Run &amp; Output</h2>
                     <button class="ui button"><i class="fa fa-play" aria-hidden="true"></i>
                     </button>
@@ -80,7 +80,8 @@
                         </table>
                     </div>
                 </div> 
-                -->
+                 -->
+                <!--
                 <div class="ui">
                         <h2>Registers</h2>
                         Add a register: 
@@ -135,6 +136,57 @@
                                 </tr>
                         </table>
                     </div>
+                    <!-- -->
+                    <div class="ui">
+                        <h2>Inputs</h2>
+                        Add an input:
+                        <button class="ui button"><i class="fa fa-plus" aria-hidden="true"></i>
+                        </button>
+                        <table class="ui table">
+                            <thead>
+                                <tr>
+                                    <th>Index </th>
+                                    <th>Value </th>
+                                    <th>Move </th>
+                                    <th>Delete </th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>0</td>
+                                <td> <input type="number" value="10" style="width: 50px;"> </td>
+                                <td> 
+                                    <div class="ui vertical icon buttons">
+                                    <button class="ui compact button updownbutton" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-up"></i></button>
+                                    <button disabled="true" class="ui compact button" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-down"></i></button> 
+                                    </div>
+                                </td>
+                                <td> <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i> </button> </td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td> <input type="number" value="10" style="width: 50px;"> </td>
+                                <td> 
+                                    <div class="ui vertical icon buttons">
+                                    <button class="ui compact button updownbutton" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-up"></i></button>
+                                    <button class="ui compact button" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-down"></i></button> 
+                                    </div>
+                                </td>
+                                <td> <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i> </button> </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td> <input type="number" value="10" style="width: 50px;"> </td>
+                                <td> 
+                                    <div class="ui vertical icon buttons">
+                                    <button disabled="true" class="ui compact button updownbutton" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-up"></i></button>
+                                    <button class="ui compact button" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-down"></i></button> 
+                                    </div>
+                                </td>
+                                <td> <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i> </button> </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- -->
             </div>
             <div class="column" style="padding: 0;"> <!-- background:#ff6666; -->
                 <div class="ui">
@@ -197,39 +249,3 @@
 </body>
 
 </html>
-
-
-                <!--
-                <div class="three wide column">
-                    
-                </div>
-                <div class="three wide column">
-                    <div class="ui segment">
-                        <h2>Inputs:</h2>
-                        <button class="ui button"><i class="fa fa-plus" aria-hidden="true"></i>
-                        </button>
-                        <div>
-                            <div>
-                                Input0: Value:
-                                <input type="number" value="10" style="width: 50px;">
-                                <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-up"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-down"></i>
-                                </button>
-                            </div>
-                            <div>
-                                Input1: Value:
-                                <input type="number" value="10" style="width: 50px;">
-                                <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-up"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-down"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                -->
