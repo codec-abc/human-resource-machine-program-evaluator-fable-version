@@ -163,39 +163,46 @@ module RunUI =
             h3
               []
               [text "States"]
-            input
+            div
+              [classy "ui form"]
               [
-                attribute "type" "range"
-                attribute "min" "1"
-                attribute "max" ((model.EvaluationResult.EvaluationStates.Length).ToString())
-                attribute "value" ((model.EvaluationResult.CurrentlySelectedState + 1).ToString())
-                onInput (fun a -> RunAction <| ChangeBrowsedState a)
-                hook 
-                  "hook"
-                  (HookHelper.CreateHook (fun node propName ->
-                    node?max <- ((model.EvaluationResult.EvaluationStates.Length).ToString())
-                    node?value <- ((model.EvaluationResult.CurrentlySelectedState + 1).ToString())
-                    )
-                  )
+                div
+                  [classy "inline field"]
+                  [
+                    input
+                      [ 
+                        attribute "type" "range"
+                        attribute "min" "1"
+                        attribute "max" ((model.EvaluationResult.EvaluationStates.Length).ToString())
+                        attribute "value" ((model.EvaluationResult.CurrentlySelectedState + 1).ToString())
+                        onInput (fun a -> RunAction <| ChangeBrowsedState a)
+                        hook 
+                          "hook"
+                          (HookHelper.CreateHook (fun node propName ->
+                            node?max <- ((model.EvaluationResult.EvaluationStates.Length).ToString())
+                            node?value <- ((model.EvaluationResult.CurrentlySelectedState + 1).ToString())
+                            )
+                          )
+                      ]
+                    input
+                      [
+                        attribute "type" "number"
+                        attribute "min" "1"
+                        attribute "max" ((model.EvaluationResult.EvaluationStates.Length).ToString())
+                        attribute "value" <| (model.EvaluationResult.CurrentlySelectedState + 1).ToString() 
+                        onChange (fun a -> RunAction <| ChangeBrowsedState a)
+                        hook 
+                          "hook2"
+                          (HookHelper.CreateHook (fun node propName ->
+                            node?max <- ((model.EvaluationResult.EvaluationStates.Length).ToString())
+                            node?value <- ((model.EvaluationResult.CurrentlySelectedState + 1).ToString())
+                            )
+                          )
+                      ]
+                    label [] [text ("/" + (model.EvaluationResult.EvaluationStates.Length).ToString())]   
+                ]
               ]
             br []
-            text <| "State "
-            input
-              [
-                attribute "type" "number"
-                attribute "min" "1"
-                attribute "max" ((model.EvaluationResult.EvaluationStates.Length).ToString())
-                attribute "value" <| (model.EvaluationResult.CurrentlySelectedState + 1).ToString() 
-                onChange (fun a -> RunAction <| ChangeBrowsedState a)
-                hook 
-                  "hook2"
-                  (HookHelper.CreateHook (fun node propName ->
-                    node?max <- ((model.EvaluationResult.EvaluationStates.Length).ToString())
-                    node?value <- ((model.EvaluationResult.CurrentlySelectedState + 1).ToString())
-                    )
-                  )
-              ]
-            text <| "/" + ((model.EvaluationResult.EvaluationStates.Length).ToString())
             h3
               []
               [text "Outputs: "]

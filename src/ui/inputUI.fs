@@ -164,6 +164,7 @@ module InputUI =
                       [classy "ui range"]
                       [
                         input inputValueAttributes
+                        label [] [text ""]
                       ]
                   ]
               ]

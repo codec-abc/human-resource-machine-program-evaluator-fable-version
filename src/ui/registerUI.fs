@@ -123,6 +123,7 @@ module RegisterUI =
                       [classy "ui range"]
                       [
                         input inputValueAttributes
+                        label [] [text ""]
                       ]
                   ]
               ]
