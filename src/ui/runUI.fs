@@ -216,7 +216,9 @@ module RunUI =
               []
               [text "Registers: "]
             table 
-              []
+              [
+                classy "ui table"
+              ]
               (registersUI selectedState)
           ]
       div [] myDiv

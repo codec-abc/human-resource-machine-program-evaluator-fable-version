@@ -132,7 +132,7 @@ module ViewMain =
                 attribute "style" "font-size: large;width: 2em;"
               ]
               []
-            text "Debug"
+            text "Run & Debug"
           ]
       ]
 
@@ -276,7 +276,7 @@ module ViewMain =
           [
             h2
               []
-              [text "Run & Output"]
+              [text "Run & Debug"]
             text "Run the program: "
             button
               [
@@ -291,6 +291,7 @@ module ViewMain =
                   ]
                   []
               ]
+            br []
             br []
             (viewRun model)
           ]
