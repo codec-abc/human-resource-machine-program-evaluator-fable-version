@@ -12,25 +12,25 @@
     <link rel="stylesheet" href="codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="codemirror/theme/monokai.css">
     <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="app.css" head="">
+    <link rel="stylesheet" href="app.css">
 </head>
 
 <body> <!-- style="background: #66ff66;" -->
     <div class="ui thin left vertical inverted labeled visible sidebar menu" id="sidebar">
         <a class="item">
-           <i class="fa fa-question-circle block layout"></i>
+           <i class="fa fa-question-circle block layout" style="font-size: large;width: 2em;"></i>
             Help
         </a>
         <a class="item">
-            <i class="block layout fa fa-arrow-right"></i>
+            <i class="block layout fa fa-arrow-right" style="font-size: large;width: 2em;"></i>
             Registers
         </a>
         <a class="item">
-            <i class="block layout fa fa-cube"></i>
+            <i class="block layout fa fa-cube" style="font-size: large;width: 2em;"></i>
             Inputs
         </a>
         <a class="item">
-            <i class="block layout fa fa-bug"></i>
+            <i class="block layout fa fa-bug" style="font-size: large;width: 2em;"></i>
             Debug
         </a>
         
@@ -38,7 +38,8 @@
     <div class="pusher" id="content">
         <div class="ui two column grid container" id="innerContainer" style="margin-bottom: 0;margin-top: 0;">
             <div class="column" style="height: 100%;overflow: auto"> <!-- background:#6666ff; -->
-                <div class="ui">
+                <!-- 
+                    <div class="ui">
                     <h2>Run &amp; Output</h2>
                     <button class="ui button"><i class="fa fa-play" aria-hidden="true"></i>
                     </button>
@@ -53,7 +54,7 @@
                         <h3>Human Value: </h3> None
                         <h3>Current Line: </h3> 20
                         <h3>Registers: </h3>
-                        <table>
+                        <table class="ui table">
                             <thead>
                                 <tr>
                                     <th>Index </th>
@@ -78,7 +79,62 @@
                             </tr>
                         </table>
                     </div>
-                </div>
+                </div> 
+                -->
+                <div class="ui">
+                        <h2>Registers</h2>
+                        Add a register: 
+                        <button class="ui button"><i class="fa fa-plus" aria-hidden="true"></i>
+                        </button>
+                        <br/>
+                        <table class="ui table">
+                            <thead>
+                                <tr>
+                                    <th>Index </th>
+                                    <th>Enabled </th>
+                                    <th>Value </th>
+                                    <th>Move </th>
+                                    <th>Delete </th>
+                                </tr>
+                            </thead>
+                                <tr>
+                                    <td>0</td>
+                                    <td> <input type="checkbox"> </td>
+                                    <td> <input type="number" value="0" disabled="true" style="width: 50px;"> </td>
+                                    <td> 
+                                        <div class="ui vertical icon buttons">
+                                        <button class="ui compact button updownbutton" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-up"></i></button>
+                                        <button disabled="true" class="ui compact button" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-down"></i></button> 
+                                        </div>
+                                    </td>
+                                    <td> <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i> </button> </td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td> <input type="checkbox"> </td>
+                                    <td> <input type="number" value="0" disabled="true" style="width: 50px;"> </td>
+                                    <td> 
+                                        <div class="ui vertical icon buttons">
+                                        <button class="ui compact button updownbutton" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-up"></i></button>
+                                        <button class="ui compact button" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-down"></i></button> 
+                                        </div>
+                                    </td>
+                                    <td> <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i> </button> </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td> <input type="checkbox"> </td>
+                                    <td> <input type="number" value="0" disabled="true" style="width: 50px;"> </td>
+                                    <td> 
+                                        <div class="ui vertical icon buttons">
+                                        <button disabled="true" class="ui compact button updownbutton" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-up"></i></button>
+                                        <button class="ui compact button" style="padding-top:5px;padding-bottom:5px;"><i class="fa fa-arrow-down"></i></button> 
+                                        </div>
+                                    </td>
+                                    <td> <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i> </button> </td>
+                                </tr>
+                        </table>
+                    </div>
             </div>
             <div class="column" style="padding: 0;"> <!-- background:#ff6666; -->
                 <div class="ui">
@@ -145,57 +201,7 @@
 
                 <!--
                 <div class="three wide column">
-                    <div class="ui segment">
-                        <h2>Registers:</h2>
-                        <button class="ui button"><i class="fa fa-plus" aria-hidden="true"></i>
-                        </button>
-                        <div>
-                            <div>
-                                R0: Value:
-                                <input type="checkbox">
-                                <input type="number" value="0" disabled="true" style="width: 50px;">
-                                <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-up"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-down"></i>
-                                </button>
-                            </div>
-                            <div>
-                                R1: Value:
-                                <input type="checkbox">
-                                <input type="number" value="0" disabled="true" style="width: 50px;">
-                                <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-up"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-down"></i>
-                                </button>
-                            </div>
-                            <div>
-                                R2: Value:
-                                <input type="checkbox">
-                                <input type="number" value="0" disabled="true" style="width: 50px;">
-                                <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-up"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-down"></i>
-                                </button>
-                            </div>
-                            <div>
-                                R3: Value:
-                                <input type="checkbox">
-                                <input type="number" value="0" disabled="true" style="width: 50px;">
-                                <button class="ui button"><i class="fa fa-trash-o" aria-hidden="true"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-up"></i>
-                                </button>
-                                <button disabled="true" class="ui button"><i class="fa fa-arrow-down"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
                 <div class="three wide column">
                     <div class="ui segment">
