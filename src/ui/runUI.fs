@@ -154,15 +154,21 @@ module RunUI =
               [head]
               (getRegistersUILines selectedState)
       
+      let titleAttribute = attribute "style" "font-weight:bold;font-size: 1.2rem"
+      
       let myDiv =
           [
-            h3
+            div
               []
-              [text "Stop cause: "]
-            text causeOfStopAsStr
-            h3
+              [
+                label [titleAttribute] [text "Stop cause: "]
+                label [] [text causeOfStopAsStr]
+              ]
+            br []
+            div
               []
-              [text "States"]
+              [label [titleAttribute] [text "States"]]
+            br []
             div
               [classy "ui form"]
               [
@@ -203,22 +209,34 @@ module RunUI =
                 ]
               ]
             br []
-            h3
+            div
               []
-              [text "Outputs: "]
-            text outputs
-            h3
+              [
+                label [titleAttribute] [text "Outputs: "]
+                label [] [text outputs]
+              ]
+            br []
+            div
               []
-              [text "Inputs: "]
-            text inputs
-            h3
+              [
+                label [titleAttribute] [text "Inputs: "]
+                label [] [text inputs]
+              ]
+            br []
+            div
               []
-              [text "Human Value: "]
-            text humanValueAsStr
-            h3
+              [
+                label [titleAttribute] [text "Human Value: "]
+                label [] [text humanValueAsStr]
+              ]
+            br []
+            div
               []
-              [text "Current Line: "]
-            text <| (selectedState.CurrentInstructionLine + 1).ToString()
+              [
+                label [titleAttribute] [text "Current Line: "]
+                label [] [text ((selectedState.CurrentInstructionLine + 1).ToString())]
+              ]
+            br []
             h3
               []
               [text "Registers: "]
