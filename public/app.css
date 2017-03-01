@@ -1,3 +1,4 @@
+/*
 .CodeMirror {
     height: 90%;
 }
@@ -16,4 +17,14 @@
 
 .ide {
     height: 100%;
+}
+*/
+
+#innerContainer { 
+  width : 100% !important;
+}
+
+.fa {
+    font-size: large;
+    width: 20px;
 }
