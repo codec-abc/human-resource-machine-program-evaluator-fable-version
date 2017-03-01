@@ -148,7 +148,8 @@ module ViewMain =
           [
             h2 
               []
-              [text "Registers:"]
+              [text "Registers"]
+            text "Add a register: "
             button
               [ 
                 classy "ui button"
@@ -162,9 +163,38 @@ module ViewMain =
                   ]
                   []
               ]
-            div
-              []
-              (viewRegisters model)
+            br []
+            table
+              [
+                classy "ui table"
+              ]
+              (List.append
+                [
+                  thead 
+                    []
+                    [
+                      tr
+                        []
+                        [
+                          th 
+                            []
+                            [text "Index"]
+                          th
+                            []
+                            [text "Enabled"]
+                          th
+                            []
+                            [text "Value"]
+                          th
+                            []
+                            [text "Move"]
+                          th
+                            []
+                            [text "Delete"]
+                        ]
+                    ] 
+                ]
+                (viewRegisters model))
           ]
       ]
   
@@ -182,7 +212,7 @@ module ViewMain =
           [
             h2
               []
-              [text "Inputs:"]
+              [text "Inputs"]
             button
               [ 
                 classy "ui button"
@@ -286,7 +316,18 @@ module ViewMain =
         classy "column"
         attribute "style" "height: 100%;overflow: auto"
       ]
-      [text "Todo"]
+      [
+        div
+          [classy "ui"]
+          [
+            h2
+              []
+              [
+                text "Help"
+              ]
+            text "TODO"
+          ]
+      ]
 
   let getSelectedPanelUI model =
     match model.SelectedPanel with

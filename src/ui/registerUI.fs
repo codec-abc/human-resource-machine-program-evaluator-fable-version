@@ -60,12 +60,14 @@ module RegisterUI =
       if register.UIIndex = 0 then
         [
           attribute "disabled" "true"
-          classy "ui button"
+          attribute "style" "padding-top:1px;padding-bottom:1px;font-size:small;"
+          classy "ui compact button"
           onMouseClick (fun a -> RegisterAction <| MoveRegisterValueUp register.UIIndex)
         ]
       else
         [
-          classy "ui button"
+          attribute "style" "padding-top:1px;padding-bottom:1px;font-size:small;"
+          classy "ui compact button"
           onMouseClick (fun a -> RegisterAction <| MoveRegisterValueUp register.UIIndex)
         ]
 
@@ -73,52 +75,75 @@ module RegisterUI =
       if register.UIIndex = nbOfRegister - 1 then
         [
           attribute "disabled" "true"
-          classy "ui button"
+          attribute "style" "padding-top:1px;padding-bottom:1px;font-size:small;"
+          classy "ui compact button"
           onMouseClick (fun a -> RegisterAction <| MoveRegisterValueDown register.UIIndex)
         ]
       else
         [
-          classy "ui button"
+          attribute "style" "padding-top:1px;padding-bottom:1px;font-size:small;"
+          classy "ui compact button"
           onMouseClick (fun a -> RegisterAction <| MoveRegisterValueDown register.UIIndex)
         ]
 
-    div
+    tr
       []
       [
-        text <| "R" + register.UIIndex.ToString() + ": "
-        text "Value: "
-        input inputStateAttributes
-        input inputValueAttributes
-        button
+        td
+          []
+          [text <| "" + register.UIIndex.ToString()]
+        td
+          []
+          [input inputStateAttributes]
+        td
+          [] 
+          [input inputValueAttributes]
+        td
           [
-            classy "ui button"
-            onMouseClick (fun a -> RegisterAction <| RemoveRegisterValue register.UIIndex)
+            attribute "style" "padding:0;"
           ]
           [
-            i
+            div
               [
-                  classy "fa fa-trash-o" 
-                  attribute "aria-hidden" "true"
+                classy "ui vertical icon buttons"
               ]
-              []
-          ]
-        button
-          upButtonAttributes
+              [
+                button
+                  upButtonAttributes
+                  [
+                    i 
+                      [
+                        classy "fa fa-arrow-up"
+                      ]
+                      []
+                  ]
+                button
+                  downButtonAttributes
+                  [
+                    i 
+                      [
+                        classy "fa fa-arrow-down"
+                      ]
+                      []
+                  ]
+              ]
+            ]
+        td
+          []
           [
-            i 
+            button
               [
-                classy "fa fa-arrow-up"
+                classy "ui button"
+                onMouseClick (fun a -> RegisterAction <| RemoveRegisterValue register.UIIndex)
               ]
-              []
-          ]
-        button
-          downButtonAttributes
-          [
-            i 
               [
-                classy "fa fa-arrow-down"
+                i
+                  [
+                      classy "fa fa-trash-o" 
+                      attribute "aria-hidden" "true"
+                  ]
+                  []
               ]
-              []
           ]
       ]
   
