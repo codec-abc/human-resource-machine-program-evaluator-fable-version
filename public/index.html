@@ -31,14 +31,12 @@
             var setSize = function()
             {
                 var pageHeight = $("#content")[0].clientHeight;
-                var innerHeight = $("#innerContainer")[0].clientHeight;
-                console.log(innerHeight);
-                window.myCodeMirror.setSize("100%", Math.max(pageHeight, innerHeight));
-                window.requestAnimationFrame(function()
-                {
-                    window.setSize();
-                });
+                window.myCodeMirror.setSize("100%", pageHeight);
             }
+
+            $(window).resize(function() {
+                setSize();
+            });
 
             window.setTimeout(function() 
             {
