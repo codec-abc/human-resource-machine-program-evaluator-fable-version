@@ -65,6 +65,7 @@ onmessage = function(e)
 
             var obj = computations[key];
             obj.shouldContinue = false;
+            obj.hasBeenStopped = true;
         }
     }
     else
@@ -73,7 +74,8 @@ onmessage = function(e)
         postData(initialState);
         computations[uuid] = {
             shouldContinue : initialState.Case === NEW_STATE_CASE,
-            state : initialState
+            state : initialState,
+            hasBeenStopped : false,
         };
 
         var runRecursively = function() {
@@ -91,16 +93,12 @@ onmessage = function(e)
                     }
                     else
                     {
-                        if (newState.Case === NEW_STATE_CASE)
+                        if (newState.Case === NEW_STATE_CASE && computations[uuid].hasBeenStopped)
                         {
                             postStop();
                         }
                     }
                 }, 0);
-            }
-            else
-            {
-                postStop();
             }
         }
 

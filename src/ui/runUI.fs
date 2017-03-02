@@ -117,6 +117,8 @@ module RunUI =
     
     result
 
+  let private titleAttribute = attribute "style" "font-weight:bold;font-size: 1.2rem"
+
   let viewRun model =
     if model.EvaluationResult.EvaluationStates.Length > 0 && model.EvaluationResult.CurrentlySelectedState < model.EvaluationResult.EvaluationStates.Length then
       let selectedState = model.EvaluationResult.EvaluationStates.[model.EvaluationResult.CurrentlySelectedState]
@@ -153,8 +155,6 @@ module RunUI =
             List.append
               [head]
               (getRegistersUILines selectedState)
-      
-      let titleAttribute = attribute "style" "font-weight:bold;font-size: 1.2rem"
       
       let myDiv =
           [
@@ -247,5 +247,17 @@ module RunUI =
               (registersUI selectedState)
           ]
       div [] myDiv
+    elif Option.isSome model.EvaluationResult.CauseOfStop then
+      let causeOfStopAsStr = 
+        match model.EvaluationResult.CauseOfStop with
+          | None -> "This message should never appear."
+          | Some causeOfStop -> causeOfStop
+
+      div 
+        [] 
+        [
+          label [titleAttribute] [text "Stop cause: "]
+          label [] [text causeOfStopAsStr]
+        ]
     else
       div [] []
