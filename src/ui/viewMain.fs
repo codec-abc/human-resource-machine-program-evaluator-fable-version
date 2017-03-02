@@ -200,7 +200,8 @@ module ViewMain =
   
   let private generateInputUI model =
     div
-      [ 
+      [
+        attribute "id" "leftColumn"
         classy "column"
         attribute "style" "height: 100%;overflow: auto"
       ]
@@ -267,6 +268,7 @@ module ViewMain =
 
     div
       [
+        attribute "id" "leftColumn"
         classy "column"
         attribute "style" "height: 100%;overflow: auto"
       ]
@@ -344,6 +346,7 @@ module ViewMain =
     div
       [
         classy "column"
+        attribute "id" "leftColumn"
         attribute "style" "height: 100%;overflow: auto"
       ]
       [
