@@ -99,30 +99,6 @@ module ViewModel =
             UIIndex = 0;
             Value = 10;
           };
-          {
-            UIIndex = 1;
-            Value = 10;
-          };
-          {
-            UIIndex = 2;
-            Value = 10;
-          };
-          {
-            UIIndex = 3;
-            Value = 10;
-          };
-          {
-            UIIndex = 4;
-            Value = 10;
-          };
-          {
-            UIIndex = 5;
-            Value = 10;
-          };
-          {
-            UIIndex = 6;
-            Value = 10;
-          }
         ];
       EvaluationResult = 
         {
