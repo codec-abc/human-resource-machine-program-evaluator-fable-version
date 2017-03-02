@@ -75,12 +75,33 @@ module ViewMain =
         newModel
 
   let private generateMenu model =
+
+    let helpMenuClasses = 
+      match model.SelectedPanel with
+        | Help -> "active item"
+        | _ -> "item"
+    
+    let registerMenuClasses = 
+      match model.SelectedPanel with
+        | Register -> "active item"
+        | _ -> "item"
+    
+    let inputsMenuClasses = 
+      match model.SelectedPanel with
+        | Input -> "active item"
+        | _ -> "item"
+
+    let debugMenuClasses = 
+      match model.SelectedPanel with
+        | Debug -> "active item"
+        | _ -> "item"
+
     div 
       [classy "ui thin left vertical inverted labeled visible sidebar menu"]
       [
         a 
           [
-            classy "item"
+            classy helpMenuClasses
             onMouseClick (fun e -> SelectedPanelChangedAction Help)
           ]
           [
@@ -95,7 +116,7 @@ module ViewMain =
         
         a 
           [
-            classy "item"
+            classy registerMenuClasses
             onMouseClick (fun e -> SelectedPanelChangedAction Register)
           ]
           [
@@ -109,7 +130,7 @@ module ViewMain =
           ]
         a 
           [
-            classy "item"
+            classy inputsMenuClasses
             onMouseClick (fun e -> SelectedPanelChangedAction Input)
           ]
           [
@@ -123,7 +144,7 @@ module ViewMain =
           ]
         a 
           [
-            classy "item"
+            classy debugMenuClasses
             onMouseClick (fun e -> SelectedPanelChangedAction Debug)
           ]
           [
