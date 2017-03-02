@@ -11,6 +11,7 @@ open View.ViewModel
 open View.RegisterUI
 open View.InputUI
 open View.RunUI
+open View.HelpUI
 open Hmrp
 open Hmrp.HmrpEvaluator
 
@@ -339,26 +340,6 @@ module ViewMain =
                         () ))
               ]
               []
-          ]
-      ]
-
-  let private generateHelpUI model =
-    div
-      [
-        classy "column"
-        attribute "id" "leftColumn"
-        attribute "style" "height: 100%;overflow: auto"
-      ]
-      [
-        div
-          [classy "ui"]
-          [
-            h2
-              []
-              [
-                text "Help"
-              ]
-            text "TODO"
           ]
       ]
 

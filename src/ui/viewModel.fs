@@ -107,5 +107,5 @@ module ViewModel =
           CurrentlySelectedState = 0;
         };
       IsRunning = false;
-      SelectedPanel = Input;
+      SelectedPanel = Help;
     }
