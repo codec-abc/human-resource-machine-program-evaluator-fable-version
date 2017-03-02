@@ -31,19 +31,19 @@
             var setSize = function()
             {
                 var pageHeight = $("#content")[0].clientHeight;
-                window.myCodeMirror.setSize("100%", pageHeight);
+                var innerHeight = $("#innerContainer")[0].clientHeight;
+                console.log(innerHeight);
+                window.myCodeMirror.setSize("100%", Math.max(pageHeight, innerHeight));
+                window.requestAnimationFrame(function()
+                {
+                    window.setSize();
+                });
             }
 
-            $(window).resize(function() 
+            window.setTimeout(function() 
             {
                 setSize();
-            });
-
-            window.setTimeout(function() 
-                {
-                    setSize();
-                }
-            ,10);
+            },10);
 
         </script>
     </body>
