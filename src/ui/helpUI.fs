@@ -196,7 +196,7 @@ module HelpUI =
                                 text "Help"
                             ]
                         a 
-                            []
+                            [attribute "href" "https://tomorrowcorporation.com/humanresourcemachine"]
                             [text "Human Resource Machine"]
                         text " is a fun game about assembly programming with a human taking the role of the CPU."
                         text " This application can be used to develop and debug such programs."
